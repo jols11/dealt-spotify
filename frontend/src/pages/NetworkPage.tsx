@@ -57,7 +57,7 @@ export function NetworkPage() {
       <Section title="Meaningful connections only">
         <Card className="overflow-hidden">
           <p className="text-sm text-muted mb-4">
-            Burgundy nodes are hubs. Click an artist to isolate incoming and outgoing handoffs. Self-repeats are hidden
+            Lilac nodes are hubs. Click an artist to isolate incoming and outgoing handoffs. Self-repeats are hidden
             so the picture stays readable.
           </p>
           <NetworkGraph nodes={data.nodes} edges={data.edges} selectedId={selected} onSelect={setSelected} />

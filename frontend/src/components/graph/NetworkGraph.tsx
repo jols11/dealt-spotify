@@ -75,7 +75,7 @@ export function NetworkGraph({
       .data(simLinks)
       .enter()
       .append('line')
-      .attr('stroke', '#c9b8a8')
+      .attr('stroke', '#cbbde0')
       .attr('stroke-opacity', 0.7)
       .attr('stroke-width', (d) => 1 + Math.log(d.count + 1))
 
@@ -91,15 +91,15 @@ export function NetworkGraph({
     node
       .append('circle')
       .attr('r', radius)
-      .attr('fill', (d) => (d.is_hub ? '#7a2e32' : '#f7f1ea'))
-      .attr('stroke', (d) => (d.id === selectedId ? '#161311' : d.is_hub ? '#7a2e32' : '#cbbba8'))
+      .attr('fill', (d) => (d.is_hub ? '#9d86c4' : '#f7f3fc'))
+      .attr('stroke', (d) => (d.id === selectedId ? '#2c2740' : d.is_hub ? '#9d86c4' : '#d5c6ea'))
       .attr('stroke-width', (d) => (d.id === selectedId ? 2.5 : 1.2))
 
     node
       .append('text')
       .text((d) => d.name)
       .attr('font-size', 11)
-      .attr('fill', '#161311')
+      .attr('fill', '#2c2740')
       .attr('text-anchor', 'middle')
       .attr('dy', (d) => radius(d) + 14)
 

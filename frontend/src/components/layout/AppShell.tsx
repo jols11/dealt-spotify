@@ -50,7 +50,7 @@ export function AppShell() {
         </nav>
       </header>
       {demo ? (
-        <div className="mx-6 md:mx-10 lg:mx-16 mb-2 rounded-full bg-[#efe6d8] text-[#5c5148] text-[12px] px-4 py-2">
+        <div className="mx-6 md:mx-10 lg:mx-16 mb-2 rounded-full bg-[#ece4f5] text-[#5c5270] text-[12px] px-4 py-2">
           You are viewing a labeled synthetic demo library — not a live Spotify history.
         </div>
       ) : null}

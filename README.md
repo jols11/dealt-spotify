@@ -116,7 +116,7 @@ Demo data is **synthetic**. Artist names are familiar so the UI can be read as a
 
 ## Design
 
-Warm paper background, near-black type, a single muted burgundy accent, large editorial headlines, and few cards. Charts answer a sentence (“Your listening peaks late at night”) rather than dumping axis labels. The network hides weak edges by default.
+Lavender paper background, soft purple-black type, a pastel lilac accent, large editorial headlines, and few cards. Charts answer a sentence (“Your listening peaks late at night”) rather than dumping axis labels. The network hides weak edges by default.
 
 ## Spotify constraints (intentional)
 

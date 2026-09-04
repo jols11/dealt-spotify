@@ -43,7 +43,7 @@ export function RecommendationsPage() {
                 <h3 className="text-2xl font-medium">{item.artist_name}</h3>
                 <p className="text-sm text-muted">{item.historical_plays} plays</p>
               </div>
-              <p className="mt-3 text-[#3c3834]">{item.reason}</p>
+              <p className="mt-3 text-[#3d3750]">{item.reason}</p>
             </Card>
           ))}
         </div>

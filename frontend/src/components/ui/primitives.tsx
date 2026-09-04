@@ -37,7 +37,7 @@ export function Stat({ label, value, hint }: { label: string; value: string; hin
 }
 
 export function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <div className={`bg-card rounded-[28px] shadow-[0_12px_40px_rgba(40,24,16,0.05)] p-6 md:p-8 ${className}`}>{children}</div>
+  return <div className={`bg-card rounded-[28px] shadow-[0_12px_40px_rgba(80,48,120,0.06)] p-6 md:p-8 ${className}`}>{children}</div>
 }
 
 export function StateMessage({ title, body }: { title: string; body: string }) {

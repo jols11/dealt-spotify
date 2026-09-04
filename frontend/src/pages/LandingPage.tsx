@@ -44,12 +44,12 @@ export function LandingPage() {
           <h1 className="text-5xl md:text-7xl font-medium tracking-tight leading-[0.95] max-w-3xl">
             How does your listening evolve?
           </h1>
-          <p className="mt-8 text-lg md:text-xl text-[#3c3834] max-w-xl leading-relaxed">
+          <p className="mt-8 text-lg md:text-xl text-[#3d3750] max-w-xl leading-relaxed">
             Not another year-in-review. This is a graph of the artists you move between, the hours you return to music,
             and how concentrated — or wide — your taste actually is.
           </p>
         </div>
-        <div className="bg-card rounded-[32px] p-8 shadow-[0_16px_50px_rgba(40,24,16,0.06)]">
+        <div className="bg-card rounded-[32px] p-8 shadow-[0_16px_50px_rgba(80,48,120,0.07)]">
           <p className="text-sm text-muted">Start with a labeled synthetic library, or connect Spotify with the minimum scopes.</p>
           <div className="mt-6 flex flex-col gap-3">
             <button
