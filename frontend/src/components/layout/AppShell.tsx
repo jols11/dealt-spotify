@@ -17,7 +17,19 @@ export function AppShell() {
 
   return (
     <div className="min-h-screen bg-paper text-ink">
-      <header className="hidden md:flex items-end justify-between px-10 lg:px-16 pt-8 pb-4">
+      <nav className="md:hidden sticky top-0 z-20 bg-paper/90 backdrop-blur px-5 pt-4 pb-2 flex items-end justify-between">
+        <div>
+          <p className="text-[10px] tracking-[0.18em] uppercase text-muted">Listening graph</p>
+        </div>
+        <div className="flex gap-4 text-[12px]">
+          <NavLink to="/recommendations" className={({ isActive }) => (isActive ? 'text-accent' : 'text-muted')}>
+            Revisit
+          </NavLink>
+          <NavLink to="/settings" className={({ isActive }) => (isActive ? 'text-accent' : 'text-muted')}>
+            Settings
+          </NavLink>
+        </div>
+      </nav>
         <div>
           <p className="text-[11px] tracking-[0.22em] uppercase text-muted">Personal listening graph</p>
           <h1 className="font-medium text-[22px] tracking-tight mt-1">Listening, decoded</h1>
