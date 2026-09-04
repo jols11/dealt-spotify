@@ -30,6 +30,7 @@ export function AppShell() {
           </NavLink>
         </div>
       </nav>
+      <header className="hidden md:flex items-end justify-between px-10 lg:px-16 pt-8 pb-4">
         <div>
           <p className="text-[11px] tracking-[0.22em] uppercase text-muted">Personal listening graph</p>
           <h1 className="font-medium text-[22px] tracking-tight mt-1">Listening, decoded</h1>
