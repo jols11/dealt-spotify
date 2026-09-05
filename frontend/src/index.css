@@ -57,71 +57,76 @@ body {
 
 .fan {
   position: relative;
-  width: min(1120px, 100%);
-  height: min(640px, 82vh);
-  margin: 1.5rem auto 2.5rem;
+  width: min(1100px, 100%);
+  height: min(680px, 84vh);
+  margin: 1.25rem auto 2.5rem;
 }
 
 .song-card.is-fan {
   inset: auto;
   left: 50%;
   top: 50%;
-  width: 248px;
-  height: 372px;
-  margin: -186px 0 0 -124px;
+  width: 236px;
+  height: 354px;
+  margin: -177px 0 0 -118px;
   cursor: default;
   box-shadow: 5px 8px 0 #2d4aa0;
 }
 
 .song-card.is-fan .song-art {
-  height: 48%;
-  margin-top: 38px;
+  height: 58%;
+  margin-top: 34px;
 }
 
+.song-card.is-fan .song-title {
+  font-size: 1.25rem;
+}
+
+/* Loose scatter from the table photo (cards only, no deck box). */
 .song-card.is-fan-0 {
-  z-index: 5;
-  transform: rotate(5deg) translate(-430px, 12px);
+  z-index: 2;
+  transform: rotate(-8deg) translate(-360px, 28px);
 }
 .song-card.is-fan-1 {
   z-index: 3;
-  transform: rotate(12deg) translate(-215px, -130px);
+  transform: rotate(7deg) translate(-95px, 8px);
 }
 .song-card.is-fan-2 {
-  z-index: 4;
-  transform: rotate(-8deg) translate(50px, -140px);
+  z-index: 6;
+  transform: rotate(11deg) translate(20px, -168px);
 }
 .song-card.is-fan-3 {
-  z-index: 1;
-  transform: rotate(14deg) translate(-20px, 150px);
+  z-index: 4;
+  transform: rotate(30deg) translate(300px, -48px);
 }
 .song-card.is-fan-4 {
-  z-index: 6;
-  transform: rotate(-5deg) translate(430px, 18px);
+  z-index: 5;
+  transform: rotate(40deg) translate(150px, 168px);
 }
 
 @media (max-width: 800px) {
   .fan {
-    height: min(480px, 64vh);
+    height: min(500px, 66vh);
   }
   .song-card.is-fan {
-    width: 168px;
-    height: 252px;
-    margin: -126px 0 0 -84px;
+    width: 158px;
+    height: 238px;
+    margin: -119px 0 0 -79px;
   }
   .song-card.is-fan-0 {
-    transform: rotate(5deg) translate(-178px, 10px);
+    transform: rotate(-8deg) translate(-168px, 18px);
   }
   .song-card.is-fan-1 {
-    transform: rotate(10deg) translate(-88px, -86px);
+    transform: rotate(6deg) translate(-42px, 6px);
   }
   .song-card.is-fan-2 {
-    transform: rotate(-7deg) translate(22px, -92px);
+    transform: rotate(10deg) translate(10px, -108px);
   }
   .song-card.is-fan-3 {
-    transform: rotate(12deg) translate(-8px, 96px);
+    transform: rotate(26deg) translate(148px, -28px);
   }
   .song-card.is-fan-4 {
-    transform: rotate(-5deg) translate(178px, 12px);
+    transform: rotate(34deg) translate(72px, 108px);
   }
 }
 
