@@ -7,6 +7,7 @@ const links = [
   { to: '/network', label: 'Network', caption: 'Connections' },
   { to: '/patterns', label: 'Patterns', caption: 'When' },
   { to: '/taste', label: 'Taste', caption: 'Profile' },
+  { to: '/discover', label: 'Discover', caption: 'Bridge' },
   { to: '/recommendations', label: 'Revisit', caption: 'Return to' },
   { to: '/settings', label: 'Settings', caption: 'Data' },
 ]
@@ -22,8 +23,8 @@ export function AppShell() {
           <p className="text-[10px] tracking-[0.18em] uppercase text-muted">Listening graph</p>
         </div>
         <div className="flex gap-4 text-[12px]">
-          <NavLink to="/recommendations" className={({ isActive }) => (isActive ? 'text-accent' : 'text-muted')}>
-            Revisit
+          <NavLink to="/discover" className={({ isActive }) => (isActive ? 'text-accent' : 'text-muted')}>
+            Discover
           </NavLink>
           <NavLink to="/settings" className={({ isActive }) => (isActive ? 'text-accent' : 'text-muted')}>
             Settings

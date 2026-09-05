@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import type { ReactNode } from 'react'
 import { AppShell } from './components/layout/AppShell'
 import { AuthProvider, useAuth } from './hooks/useAuth'
+import { DiscoverPage } from './pages/DiscoverPage'
 import { EvolutionPage } from './pages/EvolutionPage'
 import { HomePage } from './pages/HomePage'
 import { LandingPage } from './pages/LandingPage'
@@ -39,6 +40,7 @@ function AppRoutes() {
         <Route path="/network" element={<NetworkPage />} />
         <Route path="/patterns" element={<PatternsPage />} />
         <Route path="/taste" element={<TastePage />} />
+        <Route path="/discover" element={<DiscoverPage />} />
         <Route path="/recommendations" element={<RecommendationsPage />} />
         <Route path="/settings" element={<SettingsPage />} />
       </Route>

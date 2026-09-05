@@ -109,3 +109,18 @@ class SpotifyClient:
             payload = self._request("GET", "/artists", params={"ids": ",".join(chunk)})
             artists.extend(payload.get("artists") or [])
         return artists
+
+    def get_track(self, spotify_id: str) -> dict[str, Any]:
+        return self._request("GET", f"/tracks/{spotify_id}")
+
+    def get_artist(self, spotify_id: str) -> dict[str, Any]:
+        return self._request("GET", f"/artists/{spotify_id}")
+
+    def search_tracks(self, query: str, limit: int = 10) -> list[dict[str, Any]]:
+        # New Spotify apps often cap search limit at 10 even if docs say 50.
+        payload = self._request(
+            "GET",
+            "/search",
+            params={"q": query, "type": "track", "limit": min(max(limit, 1), 10)},
+        )
+        return ((payload.get("tracks") or {}).get("items")) or []

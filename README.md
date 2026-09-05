@@ -8,6 +8,9 @@ Play counts are easy. The more interesting questions are behavioral: which artis
 
 ## Features
 
+- **Connect Spotify** to ingest *your* recently played tracks and top items (personalized dashboard)
+- **Discover → bridge**: opening track + destination track → a stepping-stone set using genre overlap and session handoffs
+- **Discover → neighbors**: paste a Spotify track link (or type a name) for same-artist / shared-genre / graph-neighbor suggestions
 - **Demo mode** with a labeled synthetic library so reviewers can use the product without Spotify credentials
 - **OAuth 2.0 authorization code + PKCE**, tokens stored only on the server
 - **Ingestion** of currently available Spotify user data: recently played, top artists/tracks, profile

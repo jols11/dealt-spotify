@@ -44,4 +44,15 @@ export const api = {
   recommendations: () => request<{ items: unknown[]; empty: boolean; message: string | null }>(
     '/api/analytics/recommendations',
   ),
+  discoverCatalog: () => request<{ items: unknown[] }>('/api/discover/catalog'),
+  similarTracks: (query: string) =>
+    request<Record<string, unknown>>('/api/discover/similar', {
+      method: 'POST',
+      body: JSON.stringify({ query }),
+    }),
+  bridgePlaylist: (start: string, end: string, length = 7) =>
+    request<Record<string, unknown>>('/api/discover/bridge', {
+      method: 'POST',
+      body: JSON.stringify({ start, end, length }),
+    }),
 }

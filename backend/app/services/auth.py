@@ -142,3 +142,48 @@ def complete_oauth(db: Session, code: str, state: str, session: dict[str, Any]) 
     session.pop("oauth_state", None)
     session.pop("pkce_verifier", None)
     return user
+
+
+_catalog_token: str | None = None
+_catalog_expires: datetime | None = None
+
+
+def client_credentials_token() -> str | None:
+    """App-only token for public catalog lookup (search / get track), not user history."""
+    global _catalog_token, _catalog_expires
+    settings = get_settings()
+    if not settings.spotify_client_id or not settings.spotify_client_secret:
+        return None
+    now = datetime.now(timezone.utc)
+    if _catalog_token and _catalog_expires and _catalog_expires > now:
+        return _catalog_token
+    try:
+        response = httpx.post(
+            settings.spotify_token_url,
+            data={"grant_type": "client_credentials"},
+            auth=(settings.spotify_client_id, settings.spotify_client_secret),
+            timeout=20.0,
+        )
+    except httpx.HTTPError:
+        return None
+    if response.status_code >= 400:
+        return None
+    payload = response.json()
+    token = payload.get("access_token")
+    if not token:
+        return None
+    _catalog_token = token
+    _catalog_expires = now + timedelta(seconds=int(payload.get("expires_in") or 3600) - 60)
+    return _catalog_token
+
+
+def catalog_client_for_user(db: Session, user: User) -> SpotifyClient | None:
+    if not user.is_demo:
+        try:
+            return SpotifyClient(get_valid_access_token(db, user))
+        except AuthError:
+            pass
+    token = client_credentials_token()
+    if token:
+        return SpotifyClient(token)
+    return None

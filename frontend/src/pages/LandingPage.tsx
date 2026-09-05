@@ -50,21 +50,21 @@ export function LandingPage() {
           </p>
         </div>
         <div className="bg-card rounded-[32px] p-8 shadow-[0_16px_50px_rgba(80,48,120,0.07)]">
-          <p className="text-sm text-muted">Start with a labeled synthetic library, or connect Spotify with the minimum scopes.</p>
+          <p className="text-sm text-muted">Connect Spotify to load your recently played history, or explore a labeled synthetic library first.</p>
           <div className="mt-6 flex flex-col gap-3">
-            <button
-              onClick={() => void openDemo()}
-              disabled={!!busy}
-              className="rounded-full bg-ink text-paper py-3.5 px-5 text-sm font-medium hover:opacity-90 disabled:opacity-50"
-            >
-              {busy === 'demo' ? 'Preparing demo…' : 'Explore the demo'}
-            </button>
             <button
               onClick={() => void connectSpotify()}
               disabled={!!busy}
+              className="rounded-full bg-ink text-paper py-3.5 px-5 text-sm font-medium hover:opacity-90 disabled:opacity-50"
+            >
+              {busy === 'spotify' ? 'Redirecting…' : 'Use my Spotify library'}
+            </button>
+            <button
+              onClick={() => void openDemo()}
+              disabled={!!busy}
               className="rounded-full border border-line py-3.5 px-5 text-sm hover:bg-paper disabled:opacity-50"
             >
-              {busy === 'spotify' ? 'Redirecting…' : 'Connect Spotify'}
+              {busy === 'demo' ? 'Preparing demo…' : 'Explore the demo'}
             </button>
           </div>
           {error ? <p className="text-sm text-accent mt-4">{error}</p> : null}

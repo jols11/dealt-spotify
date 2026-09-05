@@ -21,6 +21,17 @@ export function SettingsPage() {
     }
   }
 
+  async function connectSpotify() {
+    setBusy(true)
+    setMessage(null)
+    try {
+      const { url } = await api.login()
+      window.location.href = url
+    } catch (err) {
+      setMessage(err instanceof Error ? err.message : 'Add SPOTIFY_CLIENT_ID to .env to connect a real account.')
+      setBusy(false)
+    }
+  }
   async function logout() {
     await api.logout()
     await refresh()
@@ -51,6 +62,11 @@ export function SettingsPage() {
             <button onClick={() => void sync()} disabled={busy} className="rounded-full bg-ink text-paper px-4 py-2 text-sm">
               Refresh data
             </button>
+            {me?.user?.is_demo ? (
+              <button onClick={() => void connectSpotify()} disabled={busy} className="rounded-full border border-accent text-accent px-4 py-2 text-sm">
+                Connect my Spotify
+              </button>
+            ) : null}
             <button onClick={() => void logout()} className="rounded-full border border-line px-4 py-2 text-sm">
               Sign out
             </button>
