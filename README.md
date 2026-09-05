@@ -146,9 +146,9 @@ Never commit `.env`.
 | `SPOTIFY_CLIENT_ID` | Spotify app client id |
 | `SPOTIFY_CLIENT_SECRET` | Client secret for catalog Search |
 | `SPOTIFY_REDIRECT_URI` | Must match the Dashboard, local default `http://127.0.0.1:8765/api/auth/callback` |
-| `PUBLIC_BASE_URL` | Production origin; callback becomes `{PUBLIC_BASE_URL}/api/auth/callback` |
+| `PUBLIC_BASE_URL` | Production origin; callback becomes `https://dealt-spotify.onrender.com/api/auth/callback` |
 | `SESSION_SECRET` | Cookie signing |
-| `DATABASE_URL` | `sqlite:///./data/local/listening_graph.db` (keep the `./`) |
+| `DATABASE_URL` | `sqlite:///./data/local/listening_graph.db` |
 
 
 ## Design
