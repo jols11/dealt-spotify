@@ -13,7 +13,7 @@ export type DealtTrack = {
   genres?: string[]
 }
 
-function formatLength(ms?: number) {
+export function formatLength(ms?: number) {
   if (!ms) return ""
   const total = Math.round(ms / 1000)
   const minutes = Math.floor(total / 60)

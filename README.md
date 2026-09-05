@@ -2,7 +2,7 @@
 
 Dealt turns two songs into a short playlist you can **see in a row** and **play on the page**.
 
-The landing page keeps a messy scatter of sample cards. Search an opening track and a closing track (type names, or paste a Spotify link), then click **Deal**. The generated songs land in a horizontal row: the open card is shown in full, with Spotify’s official player. Every other card peeks from the right. Click a peek to open that song and play it.
+The landing page keeps a messy scatter of sample cards. Search an opening track and a closing track (type names, or paste a Spotify link), then click **Deal**. The generated songs land in a spaced horizontal row: the open card is the player, the rest peek wider so you can read them, and a list on the right names every song in the stack. Click a peek or a list row to open that song.
 
 Thumbs up / thumbs down on a card are stored for your account. Later deals skip thumbs-down artists and prefer thumbs-up artists while walking genre tags from the start vibe to the end vibe.
 
@@ -12,12 +12,12 @@ This is not a listening-graph dashboard. It does not use Spotify Radio, Audio Fe
 
 - Search by song or artist (live Spotify Search when `.env` credentials are loaded)
 - Official Spotify embed on the open card (real track ids only; demo catalog cannot stream)
-- Horizontal poker-card row: full first card, peeking covers for the rest
+- Horizontal poker-card row: open card as the player, wider peeks of the rest, plus a text list of the whole stack
 - Length in number of songs or target minutes (`duration_ms`)
 - Genre-pace walk from opening artist tags toward the close
 - Thumbs personalize later deals
 - Save / reopen / fold stacks
-- Warm paper, royal blue, Helvetica Neue, dotted **DEALT** wordmark
+- Cool gray-white, royal blue, Helvetica Neue, dotted **DEALT** wordmark, dotted stars and notes
 
 ## Play on the site
 
@@ -137,7 +137,7 @@ Without credentials the table still deals from a small synthetic catalog. Those 
 
 ## Design
 
-Paper `#f7f0de`, royal blue, Helvetica Neue. Dotted wordmark. Dotted stars stay beside the cards, not on the type. Album art uses a dotted overlay.
+Paper `#e8edf3` with cooler white cards `#f6f8fb`, royal blue, Helvetica Neue. Dotted wordmark. Dotted stars and music notes sit beside the table. Album art uses a dotted overlay.
 
 ## Deploy
 

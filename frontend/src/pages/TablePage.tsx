@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { Deck } from '../components/deal/Deck'
 import type { DealtTrack } from '../components/deal/SongCard'
 import { SongSearch, dealRef, type PickedTrack } from '../components/deal/SongSearch'
+import { StackIndex } from '../components/deal/StackIndex'
 import { TableFan } from '../components/deal/TableFan'
 import { DottedStars } from '../components/ornament/DottedStars'
 import { useAuth } from '../hooks/useAuth'
@@ -138,7 +139,7 @@ export function TablePage() {
 
   return (
     <div className="table-page px-5 md:px-24 py-8 md:py-10">
-      <DottedStars />
+      <DottedStars hideRight={steps.length > 0} />
 
       <header className="relative z-10 flex items-start justify-between gap-4">
         <p className="text-[11px] tracking-[0.28em] uppercase">Two songs, one stack</p>
@@ -150,7 +151,7 @@ export function TablePage() {
       <h1 className="wordmark relative z-10 mt-3">Dealt</h1>
 
       <p className="relative z-10 mt-4 max-w-lg text-sm opacity-80">
-        Search an opening track and a closing track, then Deal. The full card plays in Spotify’s player; the rest of the stack peeks in a row so you can see every song. Thumbs up or down steer later deals.
+        Search an opening track and a closing track, then Deal. The cards are the player; the list on the right is the whole stack. Thumbs up or down steer later deals.
       </p>
 
       <p className="relative z-10 mt-3 max-w-xl text-xs opacity-75 leading-relaxed">
@@ -202,44 +203,49 @@ export function TablePage() {
       <div className="relative z-10 mt-12">
         {steps.length ? (
           <>
-            <p className="text-center text-sm opacity-80 mb-6">
+            <p className="text-sm opacity-80 mb-6">
               {current ? `${current.name} — ${current.artist_name}` : ''}
               <span className="mx-2">·</span>
               {active + 1} / {steps.length}
               {meta ? ` · ${meta}` : ''}
             </p>
-            <Deck
-              steps={steps}
-              active={active}
-              onSelect={setActive}
-              votes={votes}
-              onVote={(track, value) => {
-                const next = votes[track.spotify_id] === value ? 0 : value
-                setVotes((current) => ({ ...current, [track.spotify_id]: next }))
-                void api
-                  .voteTrack({
-                    spotify_id: track.spotify_id,
-                    artist_name: track.artist_name,
-                    genres: track.genres || [],
-                    vote: next,
-                  })
-                  .catch(() => {})
-              }}
-            />
-            <div className="flex justify-center gap-4 mt-8">
-              <button type="button" className="pill-blue" onClick={() => setActive((value) => Math.max(0, value - 1))} disabled={active === 0}>
-                Previous
-              </button>
-              <button
-                type="button"
-                className="pill-blue is-on"
-                onClick={() => setActive((value) => Math.min(value + 1, steps.length - 1))}
-                disabled={active >= steps.length - 1}
-              >
-                Next card
-              </button>
+            <div className="deal-stage">
+              <div>
+                <Deck
+                  steps={steps}
+                  active={active}
+                  onSelect={setActive}
+                  votes={votes}
+                  onVote={(track, value) => {
+                    const next = votes[track.spotify_id] === value ? 0 : value
+                    setVotes((current) => ({ ...current, [track.spotify_id]: next }))
+                    void api
+                      .voteTrack({
+                        spotify_id: track.spotify_id,
+                        artist_name: track.artist_name,
+                        genres: track.genres || [],
+                        vote: next,
+                      })
+                      .catch(() => {})
+                  }}
+                />
+                <div className="flex justify-center gap-4 mt-8">
+                  <button type="button" className="pill-blue" onClick={() => setActive((value) => Math.max(0, value - 1))} disabled={active === 0}>
+                    Previous
+                  </button>
+                  <button
+                    type="button"
+                    className="pill-blue is-on"
+                    onClick={() => setActive((value) => Math.min(value + 1, steps.length - 1))}
+                    disabled={active >= steps.length - 1}
+                  >
+                    Next card
+                  </button>
+                </div>
+              </div>
+              <StackIndex steps={steps} active={active} onSelect={setActive} />
             </div>
-            <p className="text-center text-xs mt-4 max-w-md mx-auto opacity-70">{method}</p>
+            <p className="text-xs mt-4 max-w-md opacity-70">{method}</p>
           </>
         ) : (
           <TableFan />
