@@ -39,8 +39,8 @@ body {
   letter-spacing: 0.04em;
   line-height: 0.82;
   text-transform: uppercase;
-  background-image: radial-gradient(circle, #2d4aa0 1.3px, transparent 1.4px);
-  background-size: 5.5px 5.5px;
+  background-image: radial-gradient(circle, #2d4aa0 0.95px, transparent 1.05px);
+  background-size: 3px 3px;
   background-position: 0 0;
   -webkit-background-clip: text;
   background-clip: text;
@@ -305,18 +305,18 @@ body {
 
 .ornament-col {
   position: absolute;
-  top: 7rem;
+  top: 58%;
   z-index: 0;
   pointer-events: none;
   color: #2d4aa0;
 }
 
 .ornament-col.is-left {
-  left: 12px;
+  left: 4px;
 }
 
 .ornament-col.is-right {
-  right: 12px;
+  right: 4px;
 }
 
 @media (max-width: 900px) {

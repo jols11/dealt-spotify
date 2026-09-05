@@ -122,7 +122,7 @@ export function TablePage() {
   const current = steps[active]
 
   return (
-    <div className="table-page px-5 md:px-16 py-8 md:py-10">
+    <div className="table-page px-5 md:px-24 py-8 md:py-10">
       <DottedStars />
 
       <header className="relative z-10 flex items-start justify-between gap-4">

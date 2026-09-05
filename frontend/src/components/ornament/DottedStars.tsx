@@ -83,15 +83,15 @@ function Sparkle({ size }: { size: number }) {
 export function DottedStars() {
   return (
     <>
-      <div className="ornament-col is-left hidden md:flex flex-col items-center gap-8">
-        <OutlineStar size={92} sparse />
-        <FilledStar size={54} />
-        <Sparkle size={22} />
+      <div className="ornament-col is-left hidden md:flex flex-col items-center gap-10">
+        <OutlineStar size={56} sparse />
+        <FilledStar size={28} />
+        <Sparkle size={16} />
       </div>
-      <div className="ornament-col is-right hidden md:flex flex-col items-center gap-10">
-        <FilledStar size={40} />
-        <OutlineStar size={70} />
-        <Sparkle size={18} />
+      <div className="ornament-col is-right hidden md:flex flex-col items-center gap-12">
+        <FilledStar size={24} />
+        <OutlineStar size={44} />
+        <Sparkle size={14} />
       </div>
     </>
   )
