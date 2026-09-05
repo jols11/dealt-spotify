@@ -42,7 +42,13 @@ def test_similar_and_bridge_use_local_catalog(tmp_path):
     bridged = bridge_playlist(db, user, "Drake Passionfruit", "Phoebe Bridgers Kyoto", length=6, unit="songs")
     assert bridged["steps"][0]["role"] == "start"
     assert bridged["steps"][-1]["role"] == "end"
+    assert bridged["steps"][0]["name"] == "Passionfruit"
+    assert bridged["steps"][-1]["name"] == "Kyoto"
     assert bridged["song_count"] >= 3
+    pop_rock = bridge_playlist(db, user, "Cruel Summer", "Karma Police", length=7, unit="songs")
+    assert pop_rock["steps"][0]["name"] == "Cruel Summer"
+    assert pop_rock["steps"][-1]["name"] == "Karma Police"
+    assert [step["spotify_id"] for step in bridged["steps"]] != [step["spotify_id"] for step in pop_rock["steps"]]
     timed = bridge_playlist(db, user, "Drake Passionfruit", "Phoebe Bridgers Kyoto", length=12, unit="minutes")
     assert timed["duration_ms"] >= 12 * 60 * 1000 or timed["song_count"] >= 3
     db.close()

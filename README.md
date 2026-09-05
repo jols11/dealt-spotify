@@ -1,10 +1,31 @@
 # Dealt
 
-Dealt turns two songs into a short playlist you can **see in a row** and **play on the page**.
+## Brief summary of what this project does
+
+Dealt is a one-page web app: you name an opening song and a closing song, then **Deal** a short stack of cards that walks from the first track to the last. The open card is the player (Spotify’s official embed). The rest of the hand peeks in a row, and a list on the right names every song so you can see the whole stack without flipping one-by-one.
+
+## Which features are included
+
+- Search by song or artist (live Spotify Search when `.env` credentials are loaded; otherwise a demo catalog)
+- Deal a hand between two songs: opening card, middle cards, closing card
+- Official Spotify embed on the open card (real track ids only; demo `syn-` ids cannot stream)
+- Horizontal poker-card row after Deal (full player + peeks) and a text **table of contents** of the stack
+- Landing page with a messy scatter of sample cards
+- Length in number of songs or target minutes (`duration_ms` from Spotify, not Audio Features)
+- Artist-graph + genre-tag walk from the opening vibe toward the close (not Spotify Radio, BPM, or Related Artists)
+- Thumbs up / down as blue icons; later deals skip thumbs-down artists and prefer thumbs-up artists
+- Save / reopen / fold stacks (server session plus a browser copy)
+- Cool gray-white paper, royal blue, Helvetica Neue, dotted **DEALT** wordmark, dotted stars and music notes
+
+Not included: a listening-graph dashboard, Audio Features / Analysis, Recommendations, or Related Artists.
+
+## How much time was spent developing this
+
+About **12 hours** of focused development, from the first commit on 4 September 2026 through this version on 5 September 2026.
 
 The landing page keeps a messy scatter of sample cards. Search an opening track and a closing track (type names, or paste a Spotify link), then click **Deal**. The generated songs land in a spaced horizontal row: the open card is the player, the rest peek wider so you can read them, and a list on the right names every song in the stack. Click a peek or a list row to open that song.
 
-Thumbs up / thumbs down on a card are stored for your account. Later deals skip thumbs-down artists and prefer thumbs-up artists while walking genre tags from the start vibe to the end vibe.
+Thumbs up / thumbs down on a card are stored for your account. Later deals skip thumbs-down artists and prefer thumbs-up artists while walking from the start artist toward the end artist.
 
 This is not a listening-graph dashboard. It does not use Spotify Radio, Audio Features (no BPM from Spotify), Audio Analysis, Recommendations, or Related Artists.
 
@@ -14,7 +35,7 @@ This is not a listening-graph dashboard. It does not use Spotify Radio, Audio Fe
 - Official Spotify embed on the open card (real track ids only; demo catalog cannot stream)
 - Horizontal poker-card row: open card as the player, wider peeks of the rest, plus a text list of the whole stack
 - Length in number of songs or target minutes (`duration_ms`)
-- Genre-pace walk from opening artist tags toward the close
+- Artist and genre walk from the opening track toward the close
 - Thumbs personalize later deals
 - Save / reopen / fold stacks
 - Cool gray-white, royal blue, Helvetica Neue, dotted **DEALT** wordmark, dotted stars and notes

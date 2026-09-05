@@ -16,8 +16,17 @@ function trackIdFromQuery(value: string) {
 }
 
 export function dealRef(picked: PickedTrack | null, query: string) {
-  if (picked?.spotify_id) return picked.spotify_id
-  return query.trim()
+  const typed = query.trim()
+  if (picked?.spotify_id) {
+    const label = `${picked.name} ${picked.artist_name}`.toLowerCase()
+    const same =
+      !typed ||
+      typed.toLowerCase() === picked.name.toLowerCase() ||
+      typed.toLowerCase() === label ||
+      typed.toLowerCase() === `${picked.artist_name} ${picked.name}`.toLowerCase()
+    if (same) return picked.spotify_id
+  }
+  return typed
 }
 
 export function SongSearch({
