@@ -69,40 +69,51 @@ See [docs/ANALYTICS.md](docs/ANALYTICS.md) for sessionization, transition probab
 
 ## Running locally
 
-You need **Python 3.10+** and **Node.js 20+** (`npm`). On a Mac, if `npm` is missing:
+You need **Python 3.10+** and **Node.js 20+**. `npm` and `uvicorn` are **not** system commands until those are installed.
+
+### 1. Install Node (fixes `npm: command not found`)
+
+In Terminal:
 
 ```bash
-brew install node
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+source ~/.zshrc
+nvm install 22
+node -v
+npm -v
 ```
 
-Run every command from the **repository root** (`spotify-listen-graph`), not from `frontend/`.
+You should see version numbers, not “command not found”.
+
+### 2. Python API (fixes `uvicorn: command not found`)
+
+Always from the **repo root** (`spotify-listen-graph`), not `frontend/`:
 
 ```bash
-cd /path/to/spotify-listen-graph
+cd ~/spotify-listen-graph   # use your actual clone path
 git pull
 
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
 pip install -r backend/requirements.txt
-
-cd frontend && npm install && cd ..
-
-cp .env.example .env
+cp -n .env.example .env
 mkdir -p data/local
 ```
 
-Terminal 1 (API):
+Do **not** type `uvicorn` by itself. Use the venv’s Python:
 
 ```bash
-source .venv/bin/activate
-PYTHONPATH=backend uvicorn app.main:app --host 127.0.0.1 --port 8765
+cd ~/spotify-listen-graph
+PYTHONPATH=backend .venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8765
 ```
 
-Terminal 2 (UI):
+### 3. Frontend (new terminal)
 
 ```bash
-cd frontend
+source ~/.zshrc
+cd ~/spotify-listen-graph/frontend
+npm install
 npm run dev -- --host 127.0.0.1 --port 4177
 ```
 
