@@ -14,4 +14,14 @@ export default defineConfig({
       },
     },
   },
+  preview: {
+    host: '127.0.0.1',
+    port: 4177,
+    proxy: {
+      '/api': {
+        target: 'http://127.0.0.1:8765',
+        changeOrigin: true,
+      },
+    },
+  },
 })

@@ -28,7 +28,7 @@ def build_authorize_url(session: dict[str, Any]) -> str:
     params = {
         "client_id": settings.spotify_client_id,
         "response_type": "code",
-        "redirect_uri": settings.spotify_redirect_uri,
+        "redirect_uri": settings.redirect_uri_effective,
         "scope": settings.oauth_scopes,
         "state": state,
         "code_challenge_method": "S256",
@@ -42,7 +42,7 @@ def exchange_code(code: str, verifier: str) -> dict[str, Any]:
     data = {
         "grant_type": "authorization_code",
         "code": code,
-        "redirect_uri": settings.spotify_redirect_uri,
+        "redirect_uri": settings.redirect_uri_effective,
         "client_id": settings.spotify_client_id,
         "code_verifier": verifier,
     }

@@ -13,7 +13,20 @@ def test_health():
     client = TestClient(app)
     response = client.get("/api/health")
     assert response.status_code == 200
-    assert response.json()["ok"] is True
+    body = response.json()
+    assert body["ok"] is True
+    assert "spotify_configured" in body
+    assert "catalog_ready" in body
+
+
+def test_spotify_credentials_strip_quotes():
+    from app.core.config import Settings
+
+    settings = Settings(spotify_client_id=' "abc123" ', spotify_client_secret="'s3cret'")
+    assert settings.spotify_client_id == "abc123"
+    assert settings.spotify_client_secret == "s3cret"
+    assert settings.spotify_configured is True
+    assert settings.catalog_ready is True
 
 
 def test_unauthenticated_analytics():

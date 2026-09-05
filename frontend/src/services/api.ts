@@ -2,6 +2,7 @@ export type MeResponse = {
   authenticated: boolean
   spotify_configured: boolean
   catalog_ready: boolean
+  api_unreachable?: boolean
   user: {
     id: number
     display_name: string

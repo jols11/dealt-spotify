@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { Deck } from '../components/deal/Deck'
 import type { DealtTrack } from '../components/deal/SongCard'
 import { SongSearch, type PickedTrack } from '../components/deal/SongSearch'
+import { TableFan } from '../components/deal/TableFan'
 import { DottedStars } from '../components/ornament/DottedStars'
 import { useAuth } from '../hooks/useAuth'
 import { api } from '../services/api'
@@ -29,6 +30,7 @@ export function TablePage() {
 
   const liveSpotify = me?.user?.is_demo === false
   const catalogReady = Boolean(me?.catalog_ready)
+  const apiUnreachable = Boolean(me?.api_unreachable)
 
   useEffect(() => {
     if (loading) return
@@ -134,11 +136,13 @@ export function TablePage() {
       </p>
 
       <p className="relative z-10 mt-3 max-w-xl text-xs opacity-75 leading-relaxed">
-        {liveSpotify
-          ? 'Spotify is connected. Search uses the live catalog, and the player on the front card is Spotify’s embed for that track.'
-          : catalogReady
-            ? 'App credentials are in .env, so search already hits Spotify. Connect your account if you want a logged-in session.'
-            : 'Without Spotify credentials, search uses a small demo catalog (those cards cannot play). Create an app at developer.spotify.com, put the Client ID and Secret in .env, restart the API, then Connect Spotify. Redirect URI: http://127.0.0.1:8765/api/auth/callback'}
+        {apiUnreachable
+          ? 'The API is not running. Start uvicorn on port 8765, then refresh. Spotify credentials live in the repo-root .env file that the API reads — saving them in the editor is not enough until the API is restarted.'
+          : liveSpotify
+            ? 'Spotify is connected. Search uses the live catalog, and the player on the front card is Spotify’s embed for that track.'
+            : catalogReady
+              ? 'Spotify catalog search is on. Click Connect Spotify to log in for playback on the front card.'
+              : 'Search still uses the demo catalog because this API process does not see SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET. Put them in the repo-root .env (no quotes), restart the API, then Connect Spotify. Redirect URI: http://127.0.0.1:8765/api/auth/callback — for a live deploy, also set PUBLIC_BASE_URL.'}
       </p>
 
       <form onSubmit={(event) => void deal(event)} className="relative z-10 mt-8 grid md:grid-cols-2 gap-4 max-w-3xl">
@@ -207,12 +211,7 @@ export function TablePage() {
             <p className="text-center text-xs mt-4 max-w-md mx-auto opacity-70">{method}</p>
           </>
         ) : (
-          <div className="deck">
-            <article className="song-card is-front flex flex-col items-center justify-center gap-3">
-              <img src="/two-of-spades.png" alt="" className="empty-card-art" />
-              <p className="text-sm px-6 text-center">Waiting on two songs</p>
-            </article>
-          </div>
+          <TableFan />
         )}
       </div>
 

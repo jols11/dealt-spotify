@@ -12,7 +12,8 @@ This is not a listening-graph dashboard and it does not use Spotify Radio, audio
 - Length as number of songs or target minutes (`duration_ms` from the track object)
 - Warm paper + royal blue, Helvetica Neue throughout
 - Dotted **DEALT** wordmark and dotted star ornaments on the sides
-- Halftone dots on album art only
+- Halftone dots converted onto each song’s album cover
+- Empty table shows a three-card fan (not a placeholder illustration)
 - Save / reopen / fold stacks
 
 ## Connect Spotify (so search and playback are live)
@@ -21,16 +22,18 @@ Without credentials, search only hits a small local demo catalog, and those card
 
 1. Create an app at [developer.spotify.com/dashboard](https://developer.spotify.com/dashboard).
 2. Add this Redirect URI: `http://127.0.0.1:8765/api/auth/callback`
-3. Copy Client ID and Client Secret into `.env`:
+3. Copy Client ID and Client Secret into the **repo-root** `.env` (same folder as `README.md`). No quotes, no spaces around `=`:
 
 ```
-SPOTIFY_CLIENT_ID=…
-SPOTIFY_CLIENT_SECRET=…
+SPOTIFY_CLIENT_ID=yourid
+SPOTIFY_CLIENT_SECRET=yoursecret
 SPOTIFY_REDIRECT_URI=http://127.0.0.1:8765/api/auth/callback
 ```
 
-4. Restart the API.
+4. **Stop and start the API again** (`Ctrl+C`, then the uvicorn command). Saving `.env` in VS Code does not apply until uvicorn restarts. Confirm with `curl http://127.0.0.1:8765/api/health` — `catalog_ready` should be `true`.
 5. Click **Connect Spotify** in the top right and approve the app.
+
+If the site says Spotify is not configured, either the API is not running, `.env` is in the wrong folder, the values are quoted, or uvicorn was not restarted.
 
 Client ID + Secret also enable catalog Search without logging in (client-credentials). Connecting your account is what ties the session to you. The player on a card is Spotify’s official embed for that track id.
 
@@ -115,7 +118,7 @@ See `.env.example`. Never commit `.env`, tokens, or the SQLite file.
 | `SPOTIFY_CLIENT_ID` | Public OAuth client id |
 | `SPOTIFY_CLIENT_SECRET` | Used for client-credentials catalog search |
 | `SPOTIFY_REDIRECT_URI` | Must match the dashboard allowlist |
-| `FRONTEND_ORIGIN` | Where OAuth redirects after callback |
+| `PUBLIC_BASE_URL` | Production site origin, e.g. `https://dealt.example.com`. Sets OAuth callback to `{PUBLIC_BASE_URL}/api/auth/callback` |
 | `SESSION_SECRET` | Cookie signing + token encryption key |
 | `DATABASE_URL` | `sqlite:///./data/local/listening_graph.db` or Postgres |
 | `SESSION_GAP_MINUTES` | Inactivity threshold (default 30) |
@@ -126,7 +129,18 @@ Without Spotify credentials, search uses a **synthetic** local catalog so the ta
 
 ## Design
 
-Warm paper (`#f7f0de`), royal blue ink, Helvetica Neue. The title is a dotted fill. Four-pointed dotted stars sit on the sides. Album art keeps its own halftone.
+Warm paper (`#f7f0de`), royal blue ink, Helvetica Neue. The title is a dotted fill. Dotted stars sit on the sides. Album covers are converted to the same dotted halftone.
+
+## Deploy
+
+One process serves the built UI and the API.
+
+1. In `frontend`: `npm ci && npm run build`
+2. Set production env: `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET`, `SESSION_SECRET`, `PUBLIC_BASE_URL=https://your-domain`
+3. In the Spotify Dashboard add Redirect URI `https://your-domain/api/auth/callback`
+4. Run: `PYTHONPATH=backend python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+
+Or: `docker build -t dealt .` then `docker run -p 8765:8765 --env-file .env -e PUBLIC_BASE_URL=https://your-domain dealt`
 
 ## Spotify constraints
 

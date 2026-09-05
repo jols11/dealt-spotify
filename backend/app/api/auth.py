@@ -43,7 +43,7 @@ def login(request: Request):
 @router.get("/callback")
 def callback(request: Request, db: Session = Depends(get_db), code: str | None = None, state: str | None = None, error: str | None = None):
     settings = get_settings()
-    frontend = settings.frontend_origin.rstrip("/")
+    frontend = settings.frontend_origin_effective
     if error:
         return RedirectResponse(f"{frontend}/?error={error}")
     if not code or not state:
@@ -69,8 +69,8 @@ def enter_demo(request: Request, db: Session = Depends(get_db)):
 def me(request: Request, db: Session = Depends(get_db)):
     user = optional_user(request, db)
     settings = get_settings()
-    configured = bool(settings.spotify_client_id)
-    catalog_ready = bool(settings.spotify_client_id and settings.spotify_client_secret)
+    configured = settings.spotify_configured
+    catalog_ready = settings.catalog_ready
     if user is None:
         return {
             "authenticated": False,

@@ -13,7 +13,7 @@ export type DealtTrack = {
 }
 
 function formatLength(ms?: number) {
-  if (!ms) return "—"
+  if (!ms) return ""
   const total = Math.round(ms / 1000)
   const minutes = Math.floor(total / 60)
   const seconds = String(total % 60).padStart(2, "0")
@@ -26,24 +26,33 @@ export function SongCard({
   isFront,
   peekOffset,
   onAdvance,
+  layout = "stack",
+  playable = true,
 }: {
   track: DealtTrack
   index: number
   isFront: boolean
   peekOffset: number
   onAdvance?: () => void
+  layout?: "stack" | "fan"
+  playable?: boolean
 }) {
   const suit = SUITS[index % SUITS.length]
   const rank = String(index + 1).padStart(2, "0")
-  const showEmbed = isFront && track.spotify_id && !track.spotify_id.startsWith("syn-")
+  const showEmbed = playable && isFront && track.spotify_id && !track.spotify_id.startsWith("syn-")
+  const length = formatLength(track.duration_ms)
 
   return (
     <article
-      className={`song-card ${isFront ? "is-front" : "is-peek"}`}
-      style={{
-        transform: `translate(${peekOffset * 18}px, ${peekOffset * 14}px)`,
-        zIndex: 40 - peekOffset,
-      }}
+      className={`song-card ${isFront ? "is-front" : "is-peek"} ${layout === "fan" ? `is-fan is-fan-${peekOffset}` : ""}`}
+      style={
+        layout === "fan"
+          ? { zIndex: peekOffset === 1 ? 14 : 10 + peekOffset }
+          : {
+              transform: `translate(${peekOffset * 18}px, ${peekOffset * 14}px)`,
+              zIndex: 40 - peekOffset,
+            }
+      }
       onClick={() => {
         if (!isFront) onAdvance?.()
       }}
@@ -63,14 +72,15 @@ export function SongCard({
         <div className="song-art-dots" />
       </div>
       <div className="song-card-body">
-        <p className="text-[10px] tracking-[0.2em] uppercase mb-1">
-          {track.role === "start" ? "Opening" : track.role === "end" ? "River" : "Turn"}
-        </p>
+        {track.role ? (
+          <p className="text-[10px] tracking-[0.2em] uppercase mb-1">
+            {track.role === "start" ? "Opening" : track.role === "end" ? "River" : "Turn"}
+          </p>
+        ) : null}
         <h3 className="song-title">{track.name}</h3>
         <p className="mt-2 text-sm">{track.artist_name}</p>
         <p className="mt-1 text-xs opacity-80">
-          {formatLength(track.duration_ms)}
-          {track.album_name ? ` · ${track.album_name}` : ""}
+          {[length, track.album_name].filter(Boolean).join(" · ")}
         </p>
         {isFront && track.reason ? <p className="mt-2 text-[11px] leading-snug opacity-80">{track.reason}</p> : null}
         {showEmbed ? (
