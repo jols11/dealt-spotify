@@ -205,13 +205,16 @@ body {
   color: #2d4aa0;
   width: 40px;
   height: 36px;
-  font-size: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
   line-height: 1;
 }
 
 .vote-btn.is-on {
-  background: #2d4aa0;
-  color: #f6f8fb;
+  background: transparent;
+  color: #2d4aa0;
 }
 
 .song-card {

@@ -41,6 +41,36 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return data as T
 }
 
+async function ensureSession() {
+  const me = await request<MeResponse>('/api/auth/me')
+  if (!me.authenticated) {
+    await request('/api/auth/demo', { method: 'POST' })
+  }
+}
+
+export type SavedHandRecord = {
+  id: number
+  title: string
+  payload: Record<string, unknown>
+}
+
+const LOCAL_HANDS = 'dealt.saved-stacks'
+
+export function readLocalHands(): SavedHandRecord[] {
+  try {
+    const raw = window.localStorage.getItem(LOCAL_HANDS)
+    if (!raw) return []
+    const parsed = JSON.parse(raw) as unknown
+    return Array.isArray(parsed) ? (parsed as SavedHandRecord[]) : []
+  } catch {
+    return []
+  }
+}
+
+export function writeLocalHands(items: SavedHandRecord[]) {
+  window.localStorage.setItem(LOCAL_HANDS, JSON.stringify(items))
+}
+
 export const api = {
   me: () => request<MeResponse>('/api/auth/me'),
   login: () => request<{ url: string }>('/api/auth/login'),
@@ -54,11 +84,47 @@ export const api = {
       method: 'POST',
       body: JSON.stringify({ start, end, length, unit }),
     }),
-  listHands: () => request<{ items: unknown[] }>('/api/hands'),
+  listHands: async () => {
+    try {
+      await ensureSession()
+      return await request<{ items: SavedHandRecord[] }>('/api/hands')
+    } catch {
+      return { items: readLocalHands() }
+    }
+  },
   listVotes: () => request<{ items: Array<{ spotify_id: string; vote: number }> }>('/api/feedback'),
   voteTrack: (body: { spotify_id: string; artist_name: string; genres: string[]; vote: number }) =>
     request('/api/feedback', { method: 'POST', body: JSON.stringify(body) }),
-  saveHand: (payload: Record<string, unknown>, title?: string) =>
-    request('/api/hands', { method: 'POST', body: JSON.stringify({ title, payload }) }),
-  deleteHand: (id: number) => request(`/api/hands/${id}`, { method: 'DELETE' }),
+  saveHand: async (payload: Record<string, unknown>, title?: string) => {
+    const steps = Array.isArray(payload.steps) ? (payload.steps as Array<{ name?: string }>) : []
+    const fallbackTitle =
+      (title || "").trim() || `${steps[0]?.name || "Opening"} → ${steps[steps.length - 1]?.name || "Close"}`
+    try {
+      await ensureSession()
+      const saved = await request<SavedHandRecord>("/api/hands", {
+        method: "POST",
+        body: JSON.stringify({ title: title || null, payload }),
+      })
+      const existing = readLocalHands().filter((item) => item.id !== saved.id)
+      writeLocalHands([saved, ...existing])
+      return saved
+    } catch {
+      const local: SavedHandRecord = {
+        id: Date.now(),
+        title: fallbackTitle,
+        payload,
+      }
+      writeLocalHands([local, ...readLocalHands()])
+      return local
+    }
+  },
+  deleteHand: async (id: number) => {
+    writeLocalHands(readLocalHands().filter((item) => item.id !== id))
+    try {
+      await ensureSession()
+      return await request(`/api/hands/${id}`, { method: 'DELETE' })
+    } catch {
+      return { ok: true }
+    }
+  },
 }

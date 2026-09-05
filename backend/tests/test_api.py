@@ -84,4 +84,18 @@ def test_demo_mode_overview_and_graph(tmp_path):
     listed = client.get("/api/feedback")
     assert listed.status_code == 200
     assert listed.json()["items"]
+    bridge = client.post(
+        "/api/discover/bridge",
+        json={"start": "Passionfruit", "end": "Holocene", "length": 5, "unit": "songs"},
+    )
+    assert bridge.status_code == 200
+    saved = client.post(
+        "/api/hands",
+        json={"payload": {"steps": bridge.json()["steps"], "method": bridge.json()["method"]}},
+    )
+    assert saved.status_code == 200
+    assert saved.json()["title"]
+    hands = client.get("/api/hands")
+    assert hands.status_code == 200
+    assert len(hands.json()["items"]) >= 1
     app.dependency_overrides.clear()

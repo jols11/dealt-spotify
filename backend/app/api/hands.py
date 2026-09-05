@@ -30,12 +30,22 @@ def list_hands(db: Session = Depends(get_db), user: User = Depends(current_user)
 
 
 @router.post("")
+@router.post("/")
 def save_hand(body: SaveHandRequest, db: Session = Depends(get_db), user: User = Depends(current_user)):
     steps = (body.payload.get("steps") or []) if isinstance(body.payload, dict) else []
-    if not steps:
+    if not isinstance(steps, list) or not steps:
         raise HTTPException(status_code=400, detail="Deal a hand before saving it.")
-    start = steps[0].get("name") if steps else "Opening"
-    end = steps[-1].get("name") if steps else "Close"
+
+    def name_at(index: int, fallback: str) -> str:
+        item = steps[index]
+        if isinstance(item, dict):
+            value = item.get("name")
+            if isinstance(value, str) and value.strip():
+                return value.strip()
+        return fallback
+
+    start = name_at(0, "Opening")
+    end = name_at(-1, "Close")
     title = (body.title or "").strip() or f"{start} → {end}"
     row = SavedHand(user_id=user.id, title=title[:255], payload=json.dumps(body.payload))
     db.add(row)

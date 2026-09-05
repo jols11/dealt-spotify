@@ -6,11 +6,9 @@ import { StackIndex } from '../components/deal/StackIndex'
 import { TableFan } from '../components/deal/TableFan'
 import { DottedStars } from '../components/ornament/DottedStars'
 import { useAuth } from '../hooks/useAuth'
-import { api } from '../services/api'
+import { api, readLocalHands, type SavedHandRecord } from '../services/api'
 
-type HandRecord = {
-  id: number
-  title: string
+type HandRecord = SavedHandRecord & {
   payload: { steps?: DealtTrack[]; method?: string; duration_label?: string }
 }
 
@@ -46,9 +44,10 @@ export function TablePage() {
   async function loadHands() {
     try {
       const data = await api.listHands()
-      setHands(data.items as HandRecord[])
+      const items = (data.items as HandRecord[]).length ? (data.items as HandRecord[]) : readLocalHands()
+      setHands(items)
     } catch {
-      setHands([])
+      setHands(readLocalHands())
     }
   }
 
@@ -62,6 +61,10 @@ export function TablePage() {
       setVotes({})
     }
   }
+
+  useEffect(() => {
+    setHands(readLocalHands())
+  }, [])
 
   useEffect(() => {
     if (me?.authenticated) {
@@ -100,15 +103,20 @@ export function TablePage() {
   }
 
   async function saveHand() {
-    if (!steps.length) return
+    if (!steps.length) {
+      setError('Deal a hand before saving it.')
+      return
+    }
+    setError(null)
+    setSavedNote(null)
     try {
-      await api.saveHand({
+      const saved = (await api.saveHand({
         steps,
         method,
         duration_label: meta,
-      })
-      setSavedNote('Saved this stack.')
-      await loadHands()
+      })) as HandRecord
+      setHands((current) => [saved, ...current.filter((hand) => hand.id !== saved.id)])
+      setSavedNote(`Saved “${saved.title}”. Open it from Saved stacks below.`)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not save this stack.')
     }
@@ -252,25 +260,33 @@ export function TablePage() {
         )}
       </div>
 
-      {hands.length ? (
+      {steps.length || hands.length ? (
         <section className="relative z-10 mt-16 max-w-3xl">
           <p className="text-[11px] tracking-[0.2em] uppercase">Saved stacks</p>
-          <ul className="mt-3 space-y-2">
-            {hands.map((hand) => (
-              <li key={hand.id} className="flex items-center justify-between gap-3 border-b border-[#2d4aa0]/30 py-2">
-                <button type="button" className="text-left" onClick={() => openHand(hand)}>
-                  {hand.title}
-                </button>
-                <button
-                  type="button"
-                  className="text-xs uppercase tracking-[0.12em]"
-                  onClick={() => void api.deleteHand(hand.id).then(loadHands)}
-                >
-                  Fold
-                </button>
-              </li>
-            ))}
-          </ul>
+          {hands.length ? (
+            <ul className="mt-3 space-y-2">
+              {hands.map((hand) => (
+                <li key={hand.id} className="flex items-center justify-between gap-3 border-b border-[#2d4aa0]/30 py-2">
+                  <button type="button" className="text-left" onClick={() => openHand(hand)}>
+                    {hand.title}
+                  </button>
+                  <button
+                    type="button"
+                    className="text-xs uppercase tracking-[0.12em]"
+                    onClick={() =>
+                      void api.deleteHand(hand.id).then(() => {
+                        setHands((current) => current.filter((item) => item.id !== hand.id))
+                      })
+                    }
+                  >
+                    Fold
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="mt-3 text-sm opacity-70">Deal, then click Save this stack. It will show up here so you can reopen it.</p>
+          )}
         </section>
       ) : null}
     </div>

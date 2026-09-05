@@ -1,3 +1,5 @@
+import { ThumbsDown, ThumbsUp } from "lucide-react"
+
 const SUITS = ["♠", "♥", "♦", "♣"]
 
 export type DealtTrack = {
@@ -96,10 +98,10 @@ export function SongCard({
             {onVote ? (
               <div className="vote-row" onClick={(event) => event.stopPropagation()}>
                 <button type="button" className={`vote-btn ${vote === 1 ? "is-on" : ""}`} onClick={() => onVote(1)} aria-label="Thumbs up">
-                  👍
+                  <ThumbsUp size={18} strokeWidth={2.4} fill={vote === 1 ? "currentColor" : "none"} />
                 </button>
                 <button type="button" className={`vote-btn ${vote === -1 ? "is-on" : ""}`} onClick={() => onVote(-1)} aria-label="Thumbs down">
-                  👎
+                  <ThumbsDown size={18} strokeWidth={2.4} fill={vote === -1 ? "currentColor" : "none"} />
                 </button>
               </div>
             ) : null}
