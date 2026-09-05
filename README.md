@@ -53,6 +53,14 @@ React, TypeScript, Vite, Tailwind, FastAPI, SQLAlchemy, NetworkX (artist-path on
 
 ## Running locally
 
+From the repo root, one command starts **both** the API (8765) and the UI (4177). Leave that terminal open:
+
+```bash
+bash scripts/dev.sh
+```
+
+Then open [http://127.0.0.1:4177](http://127.0.0.1:4177). If the page says the API is not running, this script was not used, or another process already owns 8765.
+
 You need **Python 3.10+** and **Node.js 20+**. `npm` and `uvicorn` are **not** system commands until those are installed.
 
 ### 1. Install Node (fixes `npm: command not found`)
