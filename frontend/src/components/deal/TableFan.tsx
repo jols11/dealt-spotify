@@ -25,6 +25,22 @@ const TABLE_FAN: DealtTrack[] = [
     url: 'https://open.spotify.com/search/16%20Baby%20Keem',
     image_url: '/covers/16.jpg',
   },
+  {
+    spotify_id: 'preview-sweater-weather',
+    name: 'Sweater Weather',
+    artist_name: 'The Neighbourhood',
+    album_name: 'I Love You.',
+    url: 'https://open.spotify.com/search/Sweater%20Weather%20The%20Neighbourhood',
+    image_url: '/covers/sweater-weather.jpg',
+  },
+  {
+    spotify_id: 'preview-a-cold-play',
+    name: 'A COLD PLAY',
+    artist_name: 'The Kid LAROI',
+    album_name: 'A COLD PLAY',
+    url: 'https://open.spotify.com/search/A%20COLD%20PLAY%20The%20Kid%20LAROI',
+    image_url: '/covers/a-cold-play.jpg',
+  },
 ]
 
 export function TableFan() {

@@ -47,7 +47,7 @@ export function SongCard({
       className={`song-card ${isFront ? "is-front" : "is-peek"} ${layout === "fan" ? `is-fan is-fan-${peekOffset}` : ""}`}
       style={
         layout === "fan"
-          ? { zIndex: peekOffset === 1 ? 14 : 10 + peekOffset }
+          ? {}
           : {
               transform: `translate(${peekOffset * 18}px, ${peekOffset * 14}px)`,
               zIndex: 40 - peekOffset,

@@ -24,7 +24,7 @@ class SpotifyClient:
     Intentionally omitted: audio features, audio analysis, and recommendations.
     """
 
-    def __init__(self, access_token: str, timeout: float = 20.0):
+    def __init__(self, access_token: str, timeout: float = 8.0):
         self.access_token = access_token
         self.settings = get_settings()
         self.timeout = timeout
@@ -53,7 +53,7 @@ class SpotifyClient:
                 if retries > 3:
                     raise SpotifyAPIError("Spotify rate limit persisted after retries.", 429, retry_after)
                 logger.warning("Spotify 429; sleeping %s seconds", retry_after)
-                time.sleep(min(retry_after, 5))
+                time.sleep(min(retry_after, 1))
                 continue
 
             if response.status_code >= 400:

@@ -49,3 +49,8 @@ def bridge(body: BridgeRequest, db: Session = Depends(get_db), user: User = Depe
         return bridge_playlist(db, user, body.start, body.end, body.length, body.unit)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(
+            status_code=503,
+            detail="Could not finish this deal. Check that the API is running and Spotify credentials are valid, then try again.",
+        ) from exc

@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
 from app.db.session import get_db
-from app.models.entities import User
+from app.models.entities import ArtistTransition, User
 from app.services.auth import AuthError, build_authorize_url, complete_oauth
 from app.services.demo_seed import generate_demo_events
 from app.services.pipeline import rebuild_derived
@@ -58,8 +58,13 @@ def callback(request: Request, db: Session = Depends(get_db), code: str | None =
 
 @router.post("/demo")
 def enter_demo(request: Request, db: Session = Depends(get_db)):
+    existing = optional_user(request, db)
+    if existing:
+        request.session["user_id"] = existing.id
+        return {"ok": True, "display_name": existing.display_name, "is_demo": existing.is_demo}
     user = generate_demo_events(db)
-    rebuild_derived(db, user)
+    if db.query(ArtistTransition).filter(ArtistTransition.user_id == user.id).count() == 0:
+        rebuild_derived(db, user)
     request.session["user_id"] = user.id
     request.session["demo"] = True
     return {"ok": True, "display_name": user.display_name, "is_demo": True}

@@ -12,14 +12,31 @@ export type MeResponse = {
 }
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(path, {
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json', ...(init?.headers || {}) },
-    ...init,
-  })
+  let response: Response
+  try {
+    response = await fetch(path, {
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json', ...(init?.headers || {}) },
+      ...init,
+    })
+  } catch {
+    throw new Error('Cannot reach the API. Start uvicorn on port 8765, then try Deal again.')
+  }
   const text = await response.text()
-  const data = text ? JSON.parse(text) : null
+  let data: { detail?: string; message?: string } | null = null
+  if (text) {
+    try {
+      data = JSON.parse(text)
+    } catch {
+      data = null
+    }
+  }
   if (!response.ok) {
+    if (response.status === 502 || response.status === 504) {
+      throw new Error(
+        'Deal timed out or the API restarted. Keep uvicorn running on 8765, wait a few seconds, then Deal again.',
+      )
+    }
     const detail = data?.detail || data?.message || response.statusText
     throw new Error(typeof detail === 'string' ? detail : 'Request failed')
   }

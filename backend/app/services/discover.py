@@ -114,7 +114,6 @@ def resolve_ref(db: Session, user: User, value: str) -> ResolvedTrack:
     if kind == "id" and client:
         try:
             raw = client.get_track(payload)
-            genres = _hydrate_genres(client, (raw.get("artists") or [{}])[0].get("id"))
             return _from_spotify_payload(raw, genres)
         except SpotifyAPIError as exc:
             raise ValueError(str(exc)) from exc
@@ -129,9 +128,7 @@ def resolve_ref(db: Session, user: User, value: str) -> ResolvedTrack:
         except SpotifyAPIError:
             items = []
         if items:
-            raw = items[0]
-            genres = _hydrate_genres(client, (raw.get("artists") or [{}])[0].get("id"))
-            return _from_spotify_payload(raw, genres)
+            return _from_spotify_payload(items[0])
     hits = _search_catalog(query)
     if hits:
         return hits[0]
@@ -256,7 +253,7 @@ def _tracks_by_artist(client: SpotifyClient | None, artist_name: str, used: set[
     found: list[ResolvedTrack] = []
     if client:
         try:
-            for raw in client.search_tracks(f'artist:"{artist_name}"', limit=10):
+            for raw in client.search_tracks(f'artist:"{artist_name}"', limit=5):
                 track = _from_spotify_payload(raw)
                 if track.spotify_id not in used:
                     found.append(track)
@@ -313,10 +310,11 @@ def bridge_playlist(
             name
             for name in (list(graph.neighbors(start_artist)) if start_artist in graph else [])
             if name not in {start_artist, end_artist}
-        ][:4]
+        ][:2]
     if not inner_artists:
         inner_artists = [start_artist, end_artist]
 
+    inner_artists = inner_artists[:2]
     pool: list[ResolvedTrack] = []
     for artist_name in inner_artists:
         pool.extend(_tracks_by_artist(client, artist_name, {start.spotify_id, end.spotify_id}))

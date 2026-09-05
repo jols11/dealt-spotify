@@ -27,7 +27,7 @@ body {
   background: #f7f0de;
   color: #2d4aa0;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  overflow-x: hidden;
+  overflow-x: visible;
 }
 
 .wordmark {
@@ -57,38 +57,71 @@ body {
 
 .fan {
   position: relative;
-  width: min(560px, 96vw);
-  height: min(520px, 76vh);
-  margin: 2.5rem auto 1rem;
+  width: min(980px, 100%);
+  height: min(580px, 78vh);
+  margin: 1.5rem auto 2rem;
 }
 
 .song-card.is-fan {
+  inset: auto;
+  left: 50%;
+  top: 50%;
+  width: 196px;
+  height: 292px;
+  margin: -146px 0 0 -98px;
   cursor: default;
   box-shadow: 5px 8px 0 #2d4aa0;
 }
 
+.song-card.is-fan .song-art {
+  height: 46%;
+  margin-top: 36px;
+}
+
 .song-card.is-fan-0 {
-  transform: rotate(-12deg) translate(-150px, 36px);
+  z-index: 5;
+  transform: rotate(8deg) translate(-330px, 8px);
 }
-
 .song-card.is-fan-1 {
-  transform: rotate(0deg) translate(0, -8px);
+  z-index: 3;
+  transform: rotate(26deg) translate(-155px, -108px);
 }
-
 .song-card.is-fan-2 {
-  transform: rotate(12deg) translate(150px, 36px);
+  z-index: 4;
+  transform: rotate(-16deg) translate(36px, -118px);
+}
+.song-card.is-fan-3 {
+  z-index: 1;
+  transform: rotate(34deg) translate(-24px, 118px);
+}
+.song-card.is-fan-4 {
+  z-index: 6;
+  transform: rotate(-9deg) translate(330px, 16px);
 }
 
-@media (max-width: 640px) {
+@media (max-width: 800px) {
   .fan {
-    width: min(100%, 94vw);
-    height: min(460px, 68vh);
+    height: min(420px, 62vh);
+  }
+  .song-card.is-fan {
+    width: 132px;
+    height: 200px;
+    margin: -100px 0 0 -66px;
   }
   .song-card.is-fan-0 {
-    transform: rotate(-10deg) translate(-72px, 28px);
+    transform: rotate(8deg) translate(-148px, 10px);
+  }
+  .song-card.is-fan-1 {
+    transform: rotate(22deg) translate(-70px, -72px);
   }
   .song-card.is-fan-2 {
-    transform: rotate(10deg) translate(72px, 28px);
+    transform: rotate(-14deg) translate(18px, -78px);
+  }
+  .song-card.is-fan-3 {
+    transform: rotate(28deg) translate(-10px, 78px);
+  }
+  .song-card.is-fan-4 {
+    transform: rotate(-8deg) translate(148px, 12px);
   }
 }
 
