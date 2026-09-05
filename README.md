@@ -101,7 +101,15 @@ cp -n .env.example .env
 mkdir -p data/local
 ```
 
-Do **not** type `uvicorn` by itself. Use the venv’s Python:
+`pip` is looking for `backend/requirements.txt` **relative to your current folder**. If you see “No such file”, you are not in the repo root. Run `ls`: you should see `backend`, `frontend`, and `README.md`. If you only see `src` or `package.json`, you are inside `frontend` — `cd ..` and try again.
+
+To find the clone:
+
+```bash
+find ~ -name "requirements.txt" -path "*/backend/*" 2>/dev/null
+```
+
+Then `cd` into the directory **above** `backend` (the folder that also contains `frontend`).
 
 ```bash
 cd ~/spotify-listen-graph
