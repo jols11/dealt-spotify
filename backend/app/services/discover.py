@@ -23,6 +23,7 @@ class ResolvedTrack:
     image_url: str | None
     url: str
     source: str  # spotify | catalog
+    duration_ms: int = 210000
 
 
 @dataclass
@@ -54,6 +55,7 @@ def _from_spotify_payload(track: dict, genres: list[str] | None = None) -> Resol
         image_url=images[0]["url"] if images else None,
         url=_open_url(spotify_id),
         source="spotify",
+        duration_ms=int(track.get("duration_ms") or 210000),
     )
 
 
@@ -85,6 +87,7 @@ def catalog_tracks() -> list[ResolvedTrack]:
                     image_url=None,
                     url=f"https://open.spotify.com/search/{title} {entry['name']}".replace(" ", "%20"),
                     source="catalog",
+                    duration_ms=210000,
                 )
             )
     return results
@@ -117,7 +120,7 @@ def resolve_ref(db: Session, user: User, value: str) -> ResolvedTrack:
             raise ValueError(str(exc)) from exc
     if kind == "id":
         raise ValueError(
-            "A live Spotify link needs API credentials. Connect Spotify in Settings, or pick a catalog track below."
+            "A live Spotify link needs API credentials. Connect Spotify in Settings so we can look up the track."
         )
     query = payload or value
     if client:
@@ -249,91 +252,129 @@ def _genre_graph() -> nx.Graph:
     return graph
 
 
-def _track_for_artist(artist_name: str, used: set[str], preferred: ResolvedTrack | None = None) -> ResolvedTrack | None:
-    if preferred and preferred.artist_name.lower() == artist_name.lower():
-        return preferred
+def _tracks_by_artist(client: SpotifyClient | None, artist_name: str, used: set[str]) -> list[ResolvedTrack]:
+    found: list[ResolvedTrack] = []
+    if client:
+        try:
+            for raw in client.search_tracks(f'artist:"{artist_name}"', limit=10):
+                track = _from_spotify_payload(raw)
+                if track.spotify_id not in used:
+                    found.append(track)
+        except SpotifyAPIError:
+            pass
     for track in catalog_tracks():
         if track.artist_name.lower() == artist_name.lower() and track.spotify_id not in used:
-            return track
-    return None
+            found.append(track)
+    return found
 
 
-def bridge_playlist(db: Session, user: User, start_ref: str, end_ref: str, length: int = 7) -> dict:
-    if length < 3:
-        length = 3
-    if length > 12:
-        length = 12
+def _step_payload(track: ResolvedTrack, role: str, reason: str) -> dict:
+    return {**track.__dict__, "role": role, "reason": reason}
+
+
+def bridge_playlist(
+    db: Session,
+    user: User,
+    start_ref: str,
+    end_ref: str,
+    length: int = 7,
+    unit: str = "songs",
+) -> dict:
     start = resolve_ref(db, user, start_ref)
     end = resolve_ref(db, user, end_ref)
     if start.spotify_id == end.spotify_id:
-        raise ValueError("Pick two different tracks.")
+        raise ValueError("Paste two different Spotify track links.")
 
+    client = catalog_client_for_user(db, user)
     graph = _genre_graph()
-    # Overlay the listener's own handoffs as cheap edges.
     for edge in db.query(ArtistTransition).filter(ArtistTransition.user_id == user.id).all():
         a, b = edge.source_artist.name, edge.target_artist.name
         if graph.has_node(a) and graph.has_node(b):
             graph.add_edge(a, b, weight=0.5)
 
     start_artist, end_artist = start.artist_name, end.artist_name
-    if start_artist not in graph:
-        graph.add_node(start_artist)
-    if end_artist not in graph:
-        graph.add_node(end_artist)
+    graph.add_node(start_artist)
+    graph.add_node(end_artist)
     if start.genres and end.genres and set(start.genres) & set(end.genres):
         graph.add_edge(start_artist, end_artist, weight=1.5)
 
     try:
         artist_path = nx.shortest_path(graph, start_artist, end_artist, weight="weight")
-        path_note = "Artist path is a shortest walk on genre overlap plus your session handoffs — not audio similarity."
+        path_note = "A shortest artist walk on genre overlap and your session handoffs — not audio similarity or Spotify Radio."
     except (nx.NetworkXNoPath, nx.NodeNotFound):
         artist_path = [start_artist, end_artist]
-        path_note = "No overlapping-genre path was found, so this is a direct two-song frame with catalog neighbors filled in."
+        path_note = "No genre path between those artists, so the middle is filled from each artist’s other tracks."
 
-    # Stretch/compress the artist path to the requested length.
-    mids_needed = length - 2
-    expanded: list[str] = [artist_path[0]]
-    if len(artist_path) == 1:
+    if len(artist_path) < 2:
         artist_path = [start_artist, end_artist]
-    inner = artist_path[1:-1]
-    if not inner:
-        # Fill with neighbors of start then end from FOLLOW / catalog genres
-        for name in graph.neighbors(start_artist) if start_artist in graph else []:
-            if name not in {start_artist, end_artist}:
-                inner.append(name)
-            if len(inner) >= mids_needed:
+    inner_artists = artist_path[1:-1]
+    if not inner_artists:
+        inner_artists = [
+            name
+            for name in (list(graph.neighbors(start_artist)) if start_artist in graph else [])
+            if name not in {start_artist, end_artist}
+        ][:4]
+    if not inner_artists:
+        inner_artists = [start_artist, end_artist]
+
+    pool: list[ResolvedTrack] = []
+    for artist_name in inner_artists:
+        pool.extend(_tracks_by_artist(client, artist_name, {start.spotify_id, end.spotify_id}))
+    if not pool:
+        pool = _tracks_by_artist(client, start_artist, {start.spotify_id, end.spotify_id})
+        pool.extend(_tracks_by_artist(client, end_artist, {start.spotify_id, end.spotify_id}))
+
+    used = {start.spotify_id, end.spotify_id}
+    middles: list[ResolvedTrack] = []
+    if unit == "minutes":
+        target_ms = max(8, min(int(length), 90)) * 60 * 1000
+        total = start.duration_ms + end.duration_ms
+        index = 0
+        while total < target_ms and pool and len(middles) < 16:
+            candidate = pool[index % len(pool)]
+            index += 1
+            if candidate.spotify_id in used:
+                if index > len(pool) * 3:
+                    break
+                continue
+            used.add(candidate.spotify_id)
+            middles.append(candidate)
+            total += candidate.duration_ms
+        path_note += f" Length is about {round(total / 60000)} minutes of track duration from Spotify metadata."
+    else:
+        target_count = max(3, min(int(length), 16))
+        needed = max(0, target_count - 2)
+        for candidate in pool:
+            if len(middles) >= needed:
                 break
-    while len(inner) < mids_needed and inner:
-        inner.append(inner[-1])
-    inner = inner[:mids_needed]
-    expanded.extend(inner)
-    expanded.append(artist_path[-1])
+            if candidate.spotify_id in used:
+                continue
+            used.add(candidate.spotify_id)
+            middles.append(candidate)
+        total = start.duration_ms + end.duration_ms + sum(track.duration_ms for track in middles)
+        path_note += f" {2 + len(middles)} songs, about {round(total / 60000)} minutes."
 
-    used: set[str] = set()
-    steps = []
-    for index, artist_name in enumerate(expanded):
-        preferred = start if index == 0 else end if index == len(expanded) - 1 else None
-        track = _track_for_artist(artist_name, used, preferred)
-        if track is None:
-            continue
-        used.add(track.spotify_id)
-        if index == 0:
-            reason = "Your opening track."
-        elif index == len(expanded) - 1:
-            reason = "Your destination track."
-        elif artist_name in FOLLOW.get(expanded[index - 1], []):
-            reason = f"{expanded[index - 1]} often leads to {artist_name} in this catalog’s listening patterns."
-        elif set(track.genres) & set(start.genres) and set(track.genres) & set(end.genres):
-            reason = "Sits on genres shared with both the opening and the close."
+    steps = [_step_payload(start, "start", "The opening card — the link you pasted first.")]
+    for track in middles:
+        if set(track.genres) & set(start.genres) and set(track.genres) & set(end.genres):
+            reason = "Sits on genres shared with both bookends."
+        elif track.artist_name == start_artist:
+            reason = f"Another {start_artist} track so the opening doesn’t jump immediately."
+        elif track.artist_name == end_artist:
+            reason = f"A {end_artist} track to lean toward the destination."
         else:
-            reason = f"A stepping stone via {artist_name} so the set does not jump straight from start to end."
-        steps.append({**track.__dict__, "role": "start" if index == 0 else "end" if index == len(expanded) - 1 else "bridge", "reason": reason})
+            reason = f"A stepping stone via {track.artist_name}."
+        steps.append(_step_payload(track, "bridge", reason))
+    steps.append(_step_payload(end, "end", "The closing card — the link you pasted last."))
 
-    if steps and steps[-1]["spotify_id"] != end.spotify_id:
-        steps.append({**end.__dict__, "role": "end", "reason": "Your destination track."})
-
+    total_ms = sum(int(step["duration_ms"]) for step in steps)
     return {
         "method": path_note,
+        "unit": unit,
+        "length": length,
+        "song_count": len(steps),
+        "duration_ms": total_ms,
+        "duration_label": f"{round(total_ms / 60000)} min",
         "steps": steps,
         "start": start.__dict__,
         "end": end.__dict__,

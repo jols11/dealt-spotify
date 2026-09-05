@@ -36,8 +36,10 @@ def test_similar_and_bridge_use_local_catalog(tmp_path):
     assert similar["items"]
     assert all(item["name"] != "Kill Bill" or item["artist_name"] != "SZA" for item in similar["items"])
 
-    bridged = bridge_playlist(db, user, "Drake Passionfruit", "Phoebe Bridgers Kyoto", length=6)
+    bridged = bridge_playlist(db, user, "Drake Passionfruit", "Phoebe Bridgers Kyoto", length=6, unit="songs")
     assert bridged["steps"][0]["role"] == "start"
     assert bridged["steps"][-1]["role"] == "end"
-    assert len(bridged["steps"]) >= 3
+    assert bridged["song_count"] >= 3
+    timed = bridge_playlist(db, user, "Drake Passionfruit", "Phoebe Bridgers Kyoto", length=12, unit="minutes")
+    assert timed["duration_ms"] >= 12 * 60 * 1000 or timed["song_count"] >= 3
     db.close()

@@ -50,9 +50,9 @@ export const api = {
       method: 'POST',
       body: JSON.stringify({ query }),
     }),
-  bridgePlaylist: (start: string, end: string, length = 7) =>
+  bridgePlaylist: (start: string, end: string, length = 7, unit: 'songs' | 'minutes' = 'songs') =>
     request<Record<string, unknown>>('/api/discover/bridge', {
       method: 'POST',
-      body: JSON.stringify({ start, end, length }),
+      body: JSON.stringify({ start, end, length, unit }),
     }),
 }
