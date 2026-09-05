@@ -24,9 +24,9 @@ def create_app() -> FastAPI:
         yield
 
     application = FastAPI(
-        title="The Hand",
-        version="2.0.0",
-        description="Deal a playlist as a stack of poker cards between two Spotify track links.",
+        title="Dealt",
+        version="2.1.0",
+        description="Search two songs and deal the stack between them.",
         lifespan=lifespan,
     )
     application.add_middleware(

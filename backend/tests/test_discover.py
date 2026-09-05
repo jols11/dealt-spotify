@@ -1,4 +1,4 @@
-from app.services.discover import bridge_playlist, similar_tracks
+from app.services.discover import bridge_playlist, search_tracks, similar_tracks
 from app.services.spotify_urls import parse_track_ref
 
 
@@ -30,6 +30,9 @@ def test_similar_and_bridge_use_local_catalog(tmp_path):
     db = Session()
     user = generate_demo_events(db, days=40, seed=3)
     rebuild_derived(db, user)
+
+    hits = search_tracks(db, user, "Kill Bill")
+    assert any(item.name == "Kill Bill" for item in hits)
 
     similar = similar_tracks(db, user, "SZA Kill Bill")
     assert similar["seed"]["name"] == "Kill Bill"

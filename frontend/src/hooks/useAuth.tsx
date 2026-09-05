@@ -22,7 +22,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const data = await api.me()
       setMe(data)
     } catch {
-      setMe({ authenticated: false, user: null })
+      setMe({ authenticated: false, user: null, spotify_configured: false, catalog_ready: false })
     } finally {
       setLoading(false)
     }

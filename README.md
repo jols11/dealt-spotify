@@ -1,27 +1,46 @@
-# The Hand
+# Dealt
 
-One table. Two Spotify links. A dealt set of songs as a **stack of poker cards**.
+Search two songs. We deal a **stack of cards** from the first to the last.
 
-Paste an opening track and a closing track. The backend looks those tracks up (no local song database), walks a short artist path using genre tags, and deals a hand whose size you set in **cards** or **minutes**. Click the card peeking out to advance. Save a deal as a **hand**.
+Type a song name (or paste a Spotify link), pick from the results, set the length in **cards** or **minutes**, and click Deal. The front card can play through Spotify’s embed when the track is a real catalog id.
 
 This is not a listening-graph dashboard and it does not use Spotify Radio, audio features, or related-artists.
 
 ## Features
 
-- Paste two `open.spotify.com/track/…` links
+- Search by song or artist name (Spotify Search when credentials are present; demo catalog otherwise)
 - Length as number of songs or target minutes (`duration_ms` from the track object)
-- Stacked poker cards: off-white stock, royal blue, dotted **album** halftone (not a dotted page background)
-- Titles use **Stara** when it is installed on the machine (geometric sans from the specimen); otherwise Quicksand. Body copy is Helvetica Neue.
-- Front card can play via the Spotify embed
-- Save / reopen / fold hands
+- Warm paper + royal blue, Helvetica Neue throughout
+- Dotted **DEALT** wordmark and dotted star ornaments on the sides
+- Halftone dots on album art only
+- Save / reopen / fold stacks
+
+## Connect Spotify (so search and playback are live)
+
+Without credentials, search only hits a small local demo catalog, and those cards cannot play.
+
+1. Create an app at [developer.spotify.com/dashboard](https://developer.spotify.com/dashboard).
+2. Add this Redirect URI: `http://127.0.0.1:8765/api/auth/callback`
+3. Copy Client ID and Client Secret into `.env`:
+
+```
+SPOTIFY_CLIENT_ID=…
+SPOTIFY_CLIENT_SECRET=…
+SPOTIFY_REDIRECT_URI=http://127.0.0.1:8765/api/auth/callback
+```
+
+4. Restart the API.
+5. Click **Connect Spotify** in the top right and approve the app.
+
+Client ID + Secret also enable catalog Search without logging in (client-credentials). Connecting your account is what ties the session to you. The player on a card is Spotify’s official embed for that track id.
 
 ## Architecture
 
 ```mermaid
 flowchart TD
-  Links[Two Spotify track URLs] --> API[FastAPI]
+  Search[Song name search] --> API[FastAPI]
   API --> Spotify[Get Track + Search]
-  API --> Hands[(Saved hands in SQLite)]
+  API --> Hands[(Saved stacks in SQLite)]
   API --> UI[One React table]
 ```
 
@@ -49,7 +68,7 @@ You should see version numbers, not “command not found”.
 
 ### 2. Python API (fixes `uvicorn: command not found`)
 
-Always from the **repo root** (`spotify-listen-graph`), not `frontend/`:
+Always from the **repo root**, not `frontend/`:
 
 ```bash
 cd ~/spotify-listen-graph   # use your actual clone path
@@ -65,16 +84,7 @@ mkdir -p data/local
 
 `pip` is looking for `backend/requirements.txt` **relative to your current folder**. If you see “No such file”, you are not in the repo root. Run `ls`: you should see `backend`, `frontend`, and `README.md`. If you only see `src` or `package.json`, you are inside `frontend` — `cd ..` and try again.
 
-To find the clone:
-
 ```bash
-find ~ -name "requirements.txt" -path "*/backend/*" 2>/dev/null
-```
-
-Then `cd` into the directory **above** `backend` (the folder that also contains `frontend`).
-
-```bash
-cd ~/spotify-listen-graph
 PYTHONPATH=backend .venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8765
 ```
 
@@ -87,7 +97,7 @@ npm install
 npm run dev -- --host 127.0.0.1 --port 4177
 ```
 
-Open [http://127.0.0.1:4177](http://127.0.0.1:4177). Paste two track links and click **Deal**. Connect Spotify (top right) so live links can be looked up.
+Open [http://127.0.0.1:4177](http://127.0.0.1:4177). Search two songs and click **Deal**.
 
 ### Tests
 
@@ -103,7 +113,7 @@ See `.env.example`. Never commit `.env`, tokens, or the SQLite file.
 | Variable | Purpose |
 | --- | --- |
 | `SPOTIFY_CLIENT_ID` | Public OAuth client id |
-| `SPOTIFY_CLIENT_SECRET` | Optional; used on the server if present |
+| `SPOTIFY_CLIENT_SECRET` | Used for client-credentials catalog search |
 | `SPOTIFY_REDIRECT_URI` | Must match the dashboard allowlist |
 | `FRONTEND_ORIGIN` | Where OAuth redirects after callback |
 | `SESSION_SECRET` | Cookie signing + token encryption key |
@@ -112,11 +122,11 @@ See `.env.example`. Never commit `.env`, tokens, or the SQLite file.
 
 ## Demo mode
 
-Demo data is **synthetic**. Artist names are familiar so the UI can be read as a product; the timestamps and play counts are generated. A banner on every page states this. The similarity personas are also synthetic.
+Without Spotify credentials, search uses a **synthetic** local catalog so the table still deals. Artist names are familiar; timestamps and play counts are generated.
 
 ## Design
 
-Cream table, royal blue ink, serif ranks. Dots live **on the album**, as a halftone, not on the page. Cards sit in a stack with a sliver of the next card showing.
+Warm paper (`#f7f0de`), royal blue ink, Helvetica Neue. The title is a dotted fill. Four-pointed dotted stars sit on the sides. Album art keeps its own halftone.
 
 ## Spotify constraints
 

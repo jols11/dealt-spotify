@@ -2,19 +2,10 @@
 
 @theme {
   --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --font-title: "Stara", "Quicksand", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --color-felt: #f4f4f1;
+  --color-felt: #f7f0de;
   --color-ink: #1c2758;
   --color-blue: #2d4aa0;
-  --color-paper: #fafaf8;
-}
-
-@font-face {
-  font-family: "Quicksand";
-  font-style: normal;
-  font-weight: 500 700;
-  font-display: swap;
-  src: url("/fonts/quicksand/Quicksand.woff2") format("woff2");
+  --color-paper: #f7f0de;
 }
 
 html,
@@ -25,22 +16,43 @@ body,
 
 body {
   margin: 0;
-  background: #f4f4f1;
+  background: #f7f0de;
   color: #2d4aa0;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-}
-
-.font-title {
-  font-family: var(--font-title);
-  font-weight: 700;
-  letter-spacing: -0.04em;
 }
 
 .table-page {
+  position: relative;
   min-height: 100vh;
-  background: #f4f4f1;
+  background: #f7f0de;
   color: #2d4aa0;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  overflow-x: hidden;
+}
+
+.wordmark {
+  display: inline-block;
+  margin: 0;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 700;
+  font-size: clamp(4.6rem, 16vw, 9rem);
+  letter-spacing: 0.04em;
+  line-height: 0.82;
+  text-transform: uppercase;
+  background-image: radial-gradient(circle, #2d4aa0 1.3px, transparent 1.4px);
+  background-size: 5.5px 5.5px;
+  background-position: 0 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+@supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+  .wordmark {
+    color: #2d4aa0;
+    -webkit-text-fill-color: #2d4aa0;
+  }
 }
 
 .deck {
@@ -53,7 +65,7 @@ body {
 .song-card {
   position: absolute;
   inset: 0;
-  background: #fafaf8;
+  background: #f7f0de;
   border: 2.5px solid #2d4aa0;
   border-radius: 18px;
   box-shadow: 6px 10px 0 #2d4aa0;
@@ -63,6 +75,7 @@ body {
   flex-direction: column;
   text-align: left;
   color: #2d4aa0;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   transition: transform 280ms ease, box-shadow 280ms ease;
 }
 
@@ -94,7 +107,7 @@ body {
 .song-art-dots {
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(#f4f4f1 1.15px, transparent 1.25px);
+  background-image: radial-gradient(#f7f0de 1.15px, transparent 1.25px);
   background-size: 6px 6px;
   mix-blend-mode: multiply;
   pointer-events: none;
@@ -112,7 +125,7 @@ body {
   position: absolute;
   top: 10px;
   left: 12px;
-  font-family: var(--font-title);
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: 700;
   font-size: 15px;
   line-height: 1.05;
@@ -132,11 +145,11 @@ body {
 }
 
 .song-title {
-  font-family: var(--font-title);
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: 700;
-  font-size: 1.7rem;
-  line-height: 0.95;
-  letter-spacing: -0.04em;
+  font-size: 1.55rem;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
   margin: 0;
 }
 
@@ -152,7 +165,7 @@ body {
   width: 100%;
   margin-top: 6px;
   border: 2px solid #2d4aa0;
-  background: #fafaf8;
+  background: #f7f0de;
   color: #2d4aa0;
   padding: 12px 14px;
   font-size: 14px;
@@ -171,5 +184,81 @@ body {
 
 .pill-blue.is-on {
   background: #2d4aa0;
-  color: #f4f4f1;
+  color: #f7f0de;
+}
+
+.search-results {
+  position: absolute;
+  z-index: 30;
+  left: 0;
+  right: 0;
+  top: calc(100% + 4px);
+  max-height: 240px;
+  overflow: auto;
+  border: 2px solid #2d4aa0;
+  background: #f7f0de;
+  box-shadow: 4px 6px 0 #2d4aa0;
+}
+
+.search-result {
+  display: flex;
+  width: 100%;
+  gap: 10px;
+  padding: 8px 10px;
+  text-align: left;
+  color: #2d4aa0;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid #2d4aa0;
+  font-family: inherit;
+}
+
+.search-result:last-child {
+  border-bottom: 0;
+}
+
+.search-result:hover,
+.search-result:focus {
+  background: #2d4aa0;
+  color: #f7f0de;
+}
+
+.picked-song {
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border: 2px solid #2d4aa0;
+  padding: 10px 12px;
+  background: #f7f0de;
+}
+
+.ornament-col {
+  position: absolute;
+  top: 7rem;
+  z-index: 0;
+  pointer-events: none;
+  color: #2d4aa0;
+}
+
+.ornament-col.is-left {
+  left: 12px;
+}
+
+.ornament-col.is-right {
+  right: 12px;
+}
+
+.empty-card-art {
+  width: 78%;
+  height: auto;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+@media (max-width: 900px) {
+  .ornament-col {
+    display: none;
+  }
 }

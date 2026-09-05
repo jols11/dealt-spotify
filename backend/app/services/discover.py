@@ -120,7 +120,7 @@ def resolve_ref(db: Session, user: User, value: str) -> ResolvedTrack:
             raise ValueError(str(exc)) from exc
     if kind == "id":
         raise ValueError(
-            "A live Spotify link needs API credentials. Connect Spotify in Settings so we can look up the track."
+            "Live Spotify lookup needs credentials. Add SPOTIFY_CLIENT_ID and SECRET to .env, or Connect Spotify."
         )
     query = payload or value
     if client:
@@ -135,7 +135,7 @@ def resolve_ref(db: Session, user: User, value: str) -> ResolvedTrack:
     hits = _search_catalog(query)
     if hits:
         return hits[0]
-    raise ValueError("No matching track. Try a Spotify link, or a name from the demo catalog.")
+    raise ValueError("No matching track. Search a song name, or connect Spotify for the live catalog.")
 
 
 def search_tracks(db: Session, user: User, query: str) -> list[ResolvedTrack]:
@@ -283,7 +283,7 @@ def bridge_playlist(
     start = resolve_ref(db, user, start_ref)
     end = resolve_ref(db, user, end_ref)
     if start.spotify_id == end.spotify_id:
-        raise ValueError("Paste two different Spotify track links.")
+        raise ValueError("Pick two different songs.")
 
     client = catalog_client_for_user(db, user)
     graph = _genre_graph()
@@ -354,7 +354,7 @@ def bridge_playlist(
         total = start.duration_ms + end.duration_ms + sum(track.duration_ms for track in middles)
         path_note += f" {2 + len(middles)} songs, about {round(total / 60000)} minutes."
 
-    steps = [_step_payload(start, "start", "The opening card — the link you pasted first.")]
+    steps = [_step_payload(start, "start", "The opening card — the first song you picked.")]
     for track in middles:
         if set(track.genres) & set(start.genres) and set(track.genres) & set(end.genres):
             reason = "Sits on genres shared with both bookends."
@@ -365,7 +365,7 @@ def bridge_playlist(
         else:
             reason = f"A stepping stone via {track.artist_name}."
         steps.append(_step_payload(track, "bridge", reason))
-    steps.append(_step_payload(end, "end", "The closing card — the link you pasted last."))
+    steps.append(_step_payload(end, "end", "The closing card — the last song you picked."))
 
     total_ms = sum(int(step["duration_ms"]) for step in steps)
     return {

@@ -68,10 +68,20 @@ def enter_demo(request: Request, db: Session = Depends(get_db)):
 @router.get("/me")
 def me(request: Request, db: Session = Depends(get_db)):
     user = optional_user(request, db)
+    settings = get_settings()
+    configured = bool(settings.spotify_client_id)
+    catalog_ready = bool(settings.spotify_client_id and settings.spotify_client_secret)
     if user is None:
-        return {"authenticated": False, "user": None}
+        return {
+            "authenticated": False,
+            "user": None,
+            "spotify_configured": configured,
+            "catalog_ready": catalog_ready,
+        }
     return {
         "authenticated": True,
+        "spotify_configured": configured,
+        "catalog_ready": catalog_ready or not user.is_demo,
         "user": {
             "id": user.id,
             "display_name": user.display_name,

@@ -1,5 +1,7 @@
 export type MeResponse = {
   authenticated: boolean
+  spotify_configured: boolean
+  catalog_ready: boolean
   user: {
     id: number
     display_name: string
@@ -27,6 +29,10 @@ export const api = {
   me: () => request<MeResponse>('/api/auth/me'),
   login: () => request<{ url: string }>('/api/auth/login'),
   demo: () => request('/api/auth/demo', { method: 'POST' }),
+  searchTracks: (q: string) =>
+    request<{ items: Array<{ spotify_id: string; name: string; artist_name: string; image_url?: string | null }> }>(
+      `/api/discover/search?q=${encodeURIComponent(q)}`,
+    ),
   bridgePlaylist: (start: string, end: string, length = 7, unit: 'songs' | 'minutes' = 'songs') =>
     request<Record<string, unknown>>('/api/discover/bridge', {
       method: 'POST',

@@ -56,4 +56,10 @@ def test_demo_mode_overview_and_graph(tmp_path):
     assert diversity.status_code == 200
     recs = client.get("/api/analytics/recommendations")
     assert recs.status_code == 200
+    me = client.get("/api/auth/me")
+    assert me.status_code == 200
+    assert "catalog_ready" in me.json()
+    search = client.get("/api/discover/search", params={"q": "Kill Bill"})
+    assert search.status_code == 200
+    assert search.json()["items"]
     app.dependency_overrides.clear()
