@@ -9,36 +9,12 @@
   --color-paper: #fafaf8;
 }
 
-/* Prefer locally installed Stara (Mac / licensed desktop install). */
 @font-face {
-  font-family: "Stara";
+  font-family: "Quicksand";
   font-style: normal;
-  font-weight: 500;
-  src: local("Stara Medium"), local("Stara-Medium");
-}
-@font-face {
-  font-family: "Stara";
-  font-style: normal;
-  font-weight: 600;
-  src: local("Stara SemiBold"), local("Stara Semi Bold"), local("Stara-SemiBold");
-}
-@font-face {
-  font-family: "Stara";
-  font-style: normal;
-  font-weight: 700;
-  src: local("Stara Bold"), local("Stara-Bold"), local("Stara");
-}
-@font-face {
-  font-family: "Stara";
-  font-style: normal;
-  font-weight: 800;
-  src: local("Stara ExtraBold"), local("Stara Extra Bold"), local("Stara-ExtraBold");
-}
-@font-face {
-  font-family: "Stara";
-  font-style: normal;
-  font-weight: 900;
-  src: local("Stara Black"), local("Stara-Black");
+  font-weight: 500 700;
+  font-display: swap;
+  src: url("/fonts/quicksand/Quicksand.woff2") format("woff2");
 }
 
 html,
@@ -56,7 +32,7 @@ body {
 
 .font-title {
   font-family: var(--font-title);
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: -0.04em;
 }
 
@@ -137,7 +113,7 @@ body {
   top: 10px;
   left: 12px;
   font-family: var(--font-title);
-  font-weight: 800;
+  font-weight: 700;
   font-size: 15px;
   line-height: 1.05;
 }
@@ -157,7 +133,7 @@ body {
 
 .song-title {
   font-family: var(--font-title);
-  font-weight: 800;
+  font-weight: 700;
   font-size: 1.7rem;
   line-height: 0.95;
   letter-spacing: -0.04em;

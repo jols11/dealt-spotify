@@ -109,7 +109,7 @@ export function TablePage() {
           <p className="text-[11px] tracking-[0.28em] uppercase">The table</p>
           <h1 className="font-title text-5xl md:text-6xl leading-none mt-1">
             The Hand
-            <span className="text-3xl ml-3 lowercase font-extrabold">deal</span>
+            <span className="text-3xl ml-3 lowercase font-bold">deal</span>
           </h1>
         </div>
         <button type="button" onClick={() => void connect()} className="text-xs tracking-[0.16em] uppercase border-b border-current pb-0.5">
