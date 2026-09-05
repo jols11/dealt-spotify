@@ -138,7 +138,7 @@ export function TablePage() {
   const current = steps[active]
 
   return (
-    <div className="table-page px-5 md:px-24 py-8 md:py-10">
+    <div className="table-page px-5 md:px-12 py-8 md:py-10">
       <DottedStars hideRight={steps.length > 0} />
 
       <header className="relative z-10 flex items-start justify-between gap-4">

@@ -137,7 +137,7 @@ Without credentials the table still deals from a small synthetic catalog. Those 
 
 ## Design
 
-Paper `#e8edf3` with cooler white cards `#f6f8fb`, royal blue, Helvetica Neue. Dotted wordmark. Dotted stars and music notes sit beside the table. Album art uses a dotted overlay.
+Paper `#f1f3f6` with white cards, royal blue, Helvetica Neue. Dotted wordmark. Dotted stars and music notes sit beside the table. Album art uses a dotted overlay.
 
 ## Deploy
 

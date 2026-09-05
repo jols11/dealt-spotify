@@ -2,11 +2,11 @@
 
 @theme {
   --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --color-felt: #e8edf3;
+  --color-felt: #f1f3f6;
   --color-ink: #1c2758;
   --color-blue: #2d4aa0;
-  --color-paper: #e8edf3;
-  --color-card: #f6f8fb;
+  --color-paper: #f1f3f6;
+  --color-card: #ffffff;
 }
 
 html,
@@ -17,7 +17,7 @@ body,
 
 body {
   margin: 0;
-  background: #e8edf3;
+  background: #f1f3f6;
   color: #2d4aa0;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
@@ -25,7 +25,7 @@ body {
 .table-page {
   position: relative;
   min-height: 100vh;
-  background: #e8edf3;
+  background: #f1f3f6;
   color: #2d4aa0;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   overflow-x: visible;
@@ -133,8 +133,8 @@ body {
 
 .deal-stage {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(240px, 300px);
-  gap: 28px 36px;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 260px);
+  gap: 28px 28px;
   align-items: start;
 }
 
@@ -145,8 +145,9 @@ body {
   margin: 0;
   min-height: 470px;
   overflow-x: auto;
-  gap: 14px;
-  padding: 8px 4px 16px;
+  gap: 22px;
+  padding: 8px 20px 16px 4px;
+  scrollbar-color: #2d4aa0 transparent;
 }
 
 .song-card.is-row-front,
@@ -154,17 +155,19 @@ body {
   position: relative;
   inset: auto;
   height: 470px;
+  flex-shrink: 0;
 }
 
 .song-card.is-row-front {
-  flex: 0 0 min(280px, 72vw);
-  width: min(280px, 72vw);
+  flex: 0 0 260px;
+  width: 260px;
   z-index: 3;
 }
 
 .song-card.is-row-peek {
-  flex: 0 0 128px;
-  width: 128px;
+  flex: 0 0 176px;
+  width: 176px;
+  min-width: 176px;
   margin-left: 0;
   z-index: 1;
   cursor: pointer;
@@ -214,7 +217,7 @@ body {
 .song-card {
   position: absolute;
   inset: 0;
-  background: #f6f8fb;
+  background: #ffffff;
   border: 2.5px solid #2d4aa0;
   border-radius: 18px;
   box-shadow: 6px 10px 0 #2d4aa0;
@@ -315,7 +318,7 @@ body {
   width: 100%;
   margin-top: 6px;
   border: 2px solid #2d4aa0;
-  background: #f6f8fb;
+  background: #ffffff;
   color: #2d4aa0;
   padding: 12px 14px;
   font-size: 14px;
@@ -346,7 +349,7 @@ body {
   max-height: 240px;
   overflow: auto;
   border: 2px solid #2d4aa0;
-  background: #f6f8fb;
+  background: #ffffff;
   box-shadow: 4px 6px 0 #2d4aa0;
 }
 
@@ -381,7 +384,7 @@ body {
   gap: 8px;
   border: 2px solid #2d4aa0;
   padding: 10px 12px;
-  background: #f6f8fb;
+  background: #ffffff;
 }
 
 .stack-toc {
