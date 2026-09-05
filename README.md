@@ -1,74 +1,32 @@
-# Spotify Personal Listening Graph
+# The Hand
 
-An interactive study of **how listening behavior evolves** — sessions, artist-to-artist handoffs, time-of-day rhythm, and taste concentration — built as a FastAPI analytics engine with a restrained editorial frontend. It is not a Spotify Wrapped clone, and it does not use deprecated audio-features or recommendation APIs.
+One table. Two Spotify links. A dealt set of songs as a **stack of poker cards**.
 
-## Why I built this
+Paste an opening track and a closing track. The backend looks those tracks up (no local song database), walks a short artist path using genre tags, and deals a hand whose size you set in **cards** or **minutes**. Click the card peeking out to advance. Save a deal as a **hand**.
 
-Play counts are easy. The more interesting questions are behavioral: which artists follow which other artists *inside a sitting*, how concentrated the mix is, and whether “who I am at 10pm” is different from “who I am on a Saturday.” This project treats listening as a timestamped event stream, then as a graph.
+This is not a listening-graph dashboard and it does not use Spotify Radio, audio features, or related-artists.
 
 ## Features
 
-- **Connect Spotify** to ingest *your* recently played tracks and top items (personalized dashboard)
-- **Discover → bridge**: opening track + destination track → a stepping-stone set using genre overlap and session handoffs
-- **Discover → neighbors**: paste a Spotify track link (or type a name) for same-artist / shared-genre / graph-neighbor suggestions
-- **Demo mode** with a labeled synthetic library so reviewers can use the product without Spotify credentials
-- **OAuth 2.0 authorization code + PKCE**, tokens stored only on the server
-- **Ingestion** of currently available Spotify user data: recently played, top artists/tracks, profile
-- **Sessionization** with a configurable inactivity gap
-- **Directed artist transition graph** with \(P(B \mid A)\), PageRank, and a readable D3 view
-- **Temporal patterns** by hour, weekday, month, and season
-- **Diversity metrics** (entropy, concentration, repeat rate) with honest interpretation
-- **Exploratory clustering** on behavioral vectors — not audio, not a personality quiz
-- **Explainable revisit heuristics** (not Spotify Radio, not a trained catalog model)
-- **Optional similarity engine** demonstrated with synthetic personas
-- **Clear my data** and a privacy-conscious scope list
+- Paste two `open.spotify.com/track/…` links
+- Length as number of songs or target minutes (`duration_ms` from the track object)
+- Stacked poker cards: cream stock, royal blue, dotted **album** halftone (not a dotted page background)
+- Front card can play via the Spotify embed
+- Save / reopen / fold hands
 
 ## Architecture
 
 ```mermaid
 flowchart TD
-  Spotify[Spotify Web API] --> Client[Python Spotify client]
-  Client --> Ingest[Validation and normalization]
-  Ingest --> DB[(SQLite / Postgres-ready)]
-  Demo[Synthetic demo seed] --> DB
-  DB --> Engine[Analytics engine]
-  Engine --> Sessions[Sessionization]
-  Engine --> Graph[NetworkX transitions]
-  Engine --> Stats[Diversity / time / clusters]
-  Sessions --> API[FastAPI REST]
-  Graph --> API
-  Stats --> API
-  API --> UI[React + Vite dashboard]
+  Links[Two Spotify track URLs] --> API[FastAPI]
+  API --> Spotify[Get Track + Search]
+  API --> Hands[(Saved hands in SQLite)]
+  API --> UI[One React table]
 ```
-
-The frontend never talks to Spotify. The backend owns authentication, persistence, and every non-trivial calculation.
-
-## Data model
-
-Normalized tables, with integer primary keys so PostgreSQL can replace SQLite later:
-
-| Table | Role |
-| --- | --- |
-| `users` | Spotify account or demo identity |
-| `oauth_tokens` | Encrypted access/refresh tokens |
-| `artists`, `tracks`, `genres`, `artist_genres`, `track_artists` | Catalog |
-| `listening_events` | Unique `(user, track, played_at)` plays |
-| `listening_sessions`, `session_events` | Derived sittings |
-| `artist_transitions` | Directed weighted handoffs |
-| `top_snapshots` | `/me/top` ranks stored as snapshots, **not** extra plays |
-
-Indexes cover `(user_id, played_at)`, transition lookups, and unique ingestion keys.
-
-## Analytics
-
-See [docs/ANALYTICS.md](docs/ANALYTICS.md) for sessionization, transition probability, entropy, clustering features, and ranking formulas.
 
 ## Tech stack
 
-**Frontend:** React, TypeScript, Vite, Tailwind CSS, Recharts, D3  
-**Backend:** Python, FastAPI, Pydantic, SQLAlchemy  
-**Data:** pandas / NumPy, scikit-learn (K-means on behavioral vectors), NetworkX  
-**Tests:** pytest, Vitest
+React, TypeScript, Vite, Tailwind, FastAPI, SQLAlchemy, NetworkX (artist-path only).
 
 ## Running locally
 
@@ -128,7 +86,7 @@ npm install
 npm run dev -- --host 127.0.0.1 --port 4177
 ```
 
-Open [http://127.0.0.1:4177](http://127.0.0.1:4177) and choose **Explore the demo**.
+Open [http://127.0.0.1:4177](http://127.0.0.1:4177). Paste two track links and click **Deal**. Connect Spotify (top right) so live links can be looked up.
 
 ### Tests
 
@@ -157,26 +115,13 @@ Demo data is **synthetic**. Artist names are familiar so the UI can be read as a
 
 ## Design
 
-Lavender paper background, soft purple-black type, a pastel lilac accent, large editorial headlines, and few cards. Charts answer a sentence (“Your listening peaks late at night”) rather than dumping axis labels. The network hides weak edges by default.
+Cream table, royal blue ink, serif ranks. Dots live **on the album**, as a halftone, not on the page. Cards sit in a stack with a sliver of the next card showing.
 
-## Spotify constraints (intentional)
+## Spotify constraints
 
-Not used, because they are restricted or the wrong product:
+Not used: Audio Features, Audio Analysis, Recommendations, Related Artists.
 
-- Audio Features
-- Audio Analysis
-- Recommendations endpoint
-- Training ML models on Spotify catalog audio
-
-Recently played history is short. This app accumulates what the API allows, stores top-item snapshots honestly, and uses demo mode when a dense timeline is required for review.
-
-## Future improvements
-
-- Background refresh of recently played so a real account can grow a long history
-- Optional playlist ingestion behind an extra, clearly requested scope
-- PostgreSQL in production and encrypted-at-rest volume
-- Export a personal analytics notebook without shipping raw events to a third party
-- Multi-user cosine similarity once more than one real library exists
+Track lookup uses Get Track / Search. Duration uses `duration_ms` on the track object.
 
 ## License
 

@@ -10,6 +10,7 @@ from app.api.analytics import router as analytics_router
 from app.api.auth import router as auth_router
 from app.api.data import router as data_router
 from app.api.discover import router as discover_router
+from app.api.hands import router as hands_router
 from app.core.config import get_settings
 from app.db.session import init_db
 
@@ -23,9 +24,9 @@ def create_app() -> FastAPI:
         yield
 
     application = FastAPI(
-        title="Spotify Personal Listening Graph",
-        version="1.0.0",
-        description="Behavioral listening analytics from currently available Spotify user data.",
+        title="The Hand",
+        version="2.0.0",
+        description="Deal a playlist as a stack of poker cards between two Spotify track links.",
         lifespan=lifespan,
     )
     application.add_middleware(
@@ -46,6 +47,7 @@ def create_app() -> FastAPI:
     application.include_router(data_router)
     application.include_router(analytics_router)
     application.include_router(discover_router)
+    application.include_router(hands_router)
 
     @application.get("/api/health")
     def health():

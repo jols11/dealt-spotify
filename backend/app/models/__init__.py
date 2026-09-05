@@ -6,12 +6,29 @@ from app.models.entities import (
     ListeningEvent,
     ListeningSession,
     OAuthToken,
+    SavedHand,
     SessionEvent,
     TopSnapshot,
     Track,
     TrackArtist,
     User,
 )
+
+__all__ = [
+    "Artist",
+    "ArtistGenre",
+    "ArtistTransition",
+    "Genre",
+    "ListeningEvent",
+    "ListeningSession",
+    "OAuthToken",
+    "SavedHand",
+    "SessionEvent",
+    "TopSnapshot",
+    "Track",
+    "TrackArtist",
+    "User",
+]
 
 __all__ = [
     "Artist",

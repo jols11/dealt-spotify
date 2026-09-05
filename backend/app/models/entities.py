@@ -38,6 +38,7 @@ class User(Base):
     sessions: Mapped[list["ListeningSession"]] = relationship(back_populates="user", cascade="all, delete-orphan")
     transitions: Mapped[list["ArtistTransition"]] = relationship(back_populates="user", cascade="all, delete-orphan")
     top_snapshots: Mapped[list["TopSnapshot"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+    hands: Mapped[list["SavedHand"]] = relationship(back_populates="user", cascade="all, delete-orphan")
 
 
 class OAuthToken(Base):
@@ -208,3 +209,17 @@ class TopSnapshot(Base):
     fetched_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     user: Mapped[User] = relationship(back_populates="top_snapshots")
+
+
+class SavedHand(Base):
+    """A dealt A-to-B compilation the listener chose to keep."""
+
+    __tablename__ = "saved_hands"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    title: Mapped[str] = mapped_column(String(255))
+    payload: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+    user: Mapped[User] = relationship(back_populates="hands")
