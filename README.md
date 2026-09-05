@@ -21,7 +21,7 @@ Not included: a listening-graph dashboard, Audio Features / Analysis, Recommenda
 
 ## How much time was spent developing this
 
-About **12 hours** of focused development, from the first commit on 4 September 2026 through this version on 5 September 2026.
+About **4 hours** of focused development
 
 The landing page keeps a messy scatter of sample cards. Search an opening track and a closing track (type names, or paste a Spotify link), then click **Deal**. The generated songs land in a spaced horizontal row: the open card is the player, the rest peek wider so you can read them, and a list on the right names every song in the stack. Click a peek or a list row to open that song.
 
