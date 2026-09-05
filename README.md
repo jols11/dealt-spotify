@@ -2,7 +2,7 @@
 
 ## Brief summary of what this project does
 
-Dealt is a one-page web app: you name an opening song and a closing song, then **Deal** a short stack of cards that walks from the first track to the last. The open card is the player (Spotify’s official embed). The rest of the hand peeks in a row, and a list on the right names every song so you can see the whole stack without flipping one-by-one.
+Dealt (https://dealt-spotify.onrender.com/) is a one-page web app: you name an opening song and a closing song, then **Deal** a short stack of cards that walks from the first track to the last. The open card is the player (Spotify’s official embed). The rest of the hand peeks in a row, and a list on the right names every song so you can see the whole stack without flipping one-by-one.
 
 ## Which features are included
 
@@ -19,9 +19,7 @@ Dealt is a one-page web app: you name an opening song and a closing song, then *
 
 Not included: a listening-graph dashboard, Audio Features / Analysis, Recommendations, or Related Artists.
 
-## How much time was spent developing this
-
-About **4 hours** of focused development
+About **4 hours** of focused development was spent developing this project. 
 
 The landing page keeps a messy scatter of sample cards. Search an opening track and a closing track (type names, or paste a Spotify link), then click **Deal**. The generated songs land in a spaced horizontal row: the open card is the player, the rest peek wider so you can read them, and a list on the right names every song in the stack. Click a peek or a list row to open that song.
 
