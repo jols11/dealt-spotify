@@ -20,7 +20,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
       ...init,
     })
   } catch {
-    throw new Error('Cannot reach the API. Start uvicorn on port 8765, then try Deal again.')
+    throw new Error('Cannot reach the API. Start uvicorn on port 8765, then refresh.')
   }
   const text = await response.text()
   let data: { detail?: string; message?: string } | null = null
@@ -33,9 +33,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   }
   if (!response.ok) {
     if (response.status === 502 || response.status === 504) {
-      throw new Error(
-        'Deal timed out or the API restarted. Keep uvicorn running on 8765, wait a few seconds, then Deal again.',
-      )
+      throw new Error('The API on port 8765 is not running. Start uvicorn, then refresh.')
     }
     const detail = data?.detail || data?.message || response.statusText
     throw new Error(typeof detail === 'string' ? detail : 'Request failed')

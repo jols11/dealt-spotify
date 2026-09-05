@@ -35,11 +35,11 @@ export function TablePage() {
   const apiUnreachable = Boolean(me?.api_unreachable)
 
   useEffect(() => {
-    if (loading) return
+    if (loading || apiUnreachable) return
     if (!me?.authenticated) {
-      void api.demo().then(() => refresh()).catch((err: Error) => setError(err.message))
+      void api.demo().then(() => refresh()).catch(() => {})
     }
-  }, [loading, me?.authenticated, refresh])
+  }, [loading, me?.authenticated, apiUnreachable, refresh])
 
   async function loadHands() {
     try {
