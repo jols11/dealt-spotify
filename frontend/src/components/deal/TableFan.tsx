@@ -45,15 +45,15 @@ const TABLE_FAN: DealtTrack[] = [
 
 export function TableFan() {
   return (
-    <div className="row-deck" aria-hidden="true">
+    <div className="fan" aria-hidden="true">
       {TABLE_FAN.map((track, index) => (
         <SongCard
           key={track.spotify_id}
           track={track}
           index={index}
-          isFront={index === 0}
+          isFront
           peekOffset={index}
-          layout="row"
+          layout="fan"
           playable={false}
         />
       ))}

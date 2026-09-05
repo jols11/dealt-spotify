@@ -2,7 +2,7 @@
 
 Dealt turns two songs into a short playlist you can **see in a row** and **play on the page**.
 
-Search an opening track and a closing track (type names, or paste a Spotify link). Click **Deal**. The first card in the row is shown in full, with Spotify’s official player. Every other card peeks from the right so you can preview the whole stack without clicking through one-by-one. Click a peek to open that song and play it.
+The landing page keeps a messy scatter of sample cards. Search an opening track and a closing track (type names, or paste a Spotify link), then click **Deal**. The generated songs land in a horizontal row: the open card is shown in full, with Spotify’s official player. Every other card peeks from the right. Click a peek to open that song and play it.
 
 Thumbs up / thumbs down on a card are stored for your account. Later deals skip thumbs-down artists and prefer thumbs-up artists while walking genre tags from the start vibe to the end vibe.
 
