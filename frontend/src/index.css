@@ -57,8 +57,8 @@ body {
 
 .fan {
   position: relative;
-  width: min(340px, 88vw);
-  height: min(500px, 74vh);
+  width: min(560px, 96vw);
+  height: min(520px, 76vh);
   margin: 2.5rem auto 1rem;
 }
 
@@ -68,23 +68,27 @@ body {
 }
 
 .song-card.is-fan-0 {
-  transform: rotate(-18deg) translate(-78px, 28px);
+  transform: rotate(-12deg) translate(-150px, 36px);
 }
 
 .song-card.is-fan-1 {
-  transform: rotate(0deg) translate(0, -6px);
+  transform: rotate(0deg) translate(0, -8px);
 }
 
 .song-card.is-fan-2 {
-  transform: rotate(18deg) translate(78px, 28px);
+  transform: rotate(12deg) translate(150px, 36px);
 }
 
 @media (max-width: 640px) {
+  .fan {
+    width: min(100%, 94vw);
+    height: min(460px, 68vh);
+  }
   .song-card.is-fan-0 {
-    transform: rotate(-12deg) translate(-36px, 22px);
+    transform: rotate(-10deg) translate(-72px, 28px);
   }
   .song-card.is-fan-2 {
-    transform: rotate(12deg) translate(36px, 22px);
+    transform: rotate(10deg) translate(72px, 28px);
   }
 }
 

@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { Deck } from '../components/deal/Deck'
 import type { DealtTrack } from '../components/deal/SongCard'
-import { SongSearch, type PickedTrack } from '../components/deal/SongSearch'
+import { SongSearch, dealRef, type PickedTrack } from '../components/deal/SongSearch'
 import { TableFan } from '../components/deal/TableFan'
 import { DottedStars } from '../components/ornament/DottedStars'
 import { useAuth } from '../hooks/useAuth'
@@ -17,6 +17,8 @@ export function TablePage() {
   const { loading, me, refresh } = useAuth()
   const [start, setStart] = useState<PickedTrack | null>(null)
   const [end, setEnd] = useState<PickedTrack | null>(null)
+  const [startQuery, setStartQuery] = useState('')
+  const [endQuery, setEndQuery] = useState('')
   const [unit, setUnit] = useState<'songs' | 'minutes'>('songs')
   const [length, setLength] = useState(7)
   const [steps, setSteps] = useState<DealtTrack[]>([])
@@ -54,15 +56,17 @@ export function TablePage() {
 
   async function deal(event: FormEvent) {
     event.preventDefault()
-    if (!start || !end) {
-      setError('Search and pick an opening song and a closing song.')
+    const opening = dealRef(start, startQuery)
+    const closing = dealRef(end, endQuery)
+    if (!opening || !closing) {
+      setError('Type an opening song and a closing song, then Deal. You can click a result from the list, or just Deal with the names you typed.')
       return
     }
     setBusy(true)
     setError(null)
     setSavedNote(null)
     try {
-      const result = (await api.bridgePlaylist(start.spotify_id, end.spotify_id, length, unit)) as {
+      const result = (await api.bridgePlaylist(opening, closing, length, unit)) as {
         steps: DealtTrack[]
         method: string
         duration_label: string
@@ -131,8 +135,7 @@ export function TablePage() {
       <h1 className="wordmark relative z-10 mt-3">Dealt</h1>
 
       <p className="relative z-10 mt-4 max-w-lg text-sm opacity-80">
-        Search an opening track and a closing track. We deal the cards between them. Click the card
-        peeking out to play the next one.
+        Search an opening track and a closing track, then Deal — you can type the names and Deal without clicking the list. We deal the cards between them.
       </p>
 
       <p className="relative z-10 mt-3 max-w-xl text-xs opacity-75 leading-relaxed">
@@ -146,8 +149,8 @@ export function TablePage() {
       </p>
 
       <form onSubmit={(event) => void deal(event)} className="relative z-10 mt-8 grid md:grid-cols-2 gap-4 max-w-3xl">
-        <SongSearch label="First song" picked={start} onPick={setStart} />
-        <SongSearch label="Last song" picked={end} onPick={setEnd} />
+        <SongSearch label="First song" picked={start} onPick={setStart} query={startQuery} onQuery={setStartQuery} />
+        <SongSearch label="Last song" picked={end} onPick={setEnd} query={endQuery} onQuery={setEndQuery} />
         <div className="md:col-span-2 flex flex-wrap items-end gap-3">
           <div className="flex">
             <button type="button" className={`pill-blue ${unit === 'songs' ? 'is-on' : ''}`} onClick={() => { setUnit('songs'); setLength(7) }}>

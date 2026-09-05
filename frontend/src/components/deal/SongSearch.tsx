@@ -15,16 +15,24 @@ function trackIdFromQuery(value: string) {
   return uri?.[1] ?? null
 }
 
+export function dealRef(picked: PickedTrack | null, query: string) {
+  if (picked?.spotify_id) return picked.spotify_id
+  return query.trim()
+}
+
 export function SongSearch({
   label,
   picked,
   onPick,
+  query,
+  onQuery,
 }: {
   label: string
   picked: PickedTrack | null
   onPick: (track: PickedTrack | null) => void
+  query: string
+  onQuery: (value: string) => void
 }) {
-  const [query, setQuery] = useState('')
   const [items, setItems] = useState<PickedTrack[]>([])
   const [open, setOpen] = useState(false)
   const [searching, setSearching] = useState(false)
@@ -39,6 +47,7 @@ export function SongSearch({
   }, [])
 
   useEffect(() => {
+    if (picked) return
     const id = trackIdFromQuery(query)
     if (id) {
       onPick({
@@ -65,7 +74,13 @@ export function SongSearch({
         .finally(() => setSearching(false))
     }, 220)
     return () => window.clearTimeout(timer)
-  }, [query, onPick])
+  }, [query, onPick, picked])
+
+  function choose(item: PickedTrack) {
+    onPick(item)
+    onQuery(`${item.name} ${item.artist_name}`)
+    setOpen(false)
+  }
 
   if (picked) {
     return (
@@ -76,7 +91,14 @@ export function SongSearch({
             {picked.name}
             <span className="opacity-70"> — {picked.artist_name}</span>
           </span>
-          <button type="button" className="text-[11px] uppercase tracking-[0.12em]" onClick={() => onPick(null)}>
+          <button
+            type="button"
+            className="text-[11px] uppercase tracking-[0.12em]"
+            onClick={() => {
+              onPick(null)
+              onQuery('')
+            }}
+          >
             Clear
           </button>
         </div>
@@ -90,24 +112,21 @@ export function SongSearch({
       <input
         className="input-blue"
         value={query}
-        onChange={(event) => setQuery(event.target.value)}
+        onChange={(event) => onQuery(event.target.value)}
         onFocus={() => items.length && setOpen(true)}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' && items[0]) {
+            event.preventDefault()
+            choose(items[0])
+          }
+        }}
         placeholder="Song or artist — or a Spotify link"
         autoComplete="off"
       />
       {open && items.length ? (
         <div className="search-results">
           {items.map((item) => (
-            <button
-              key={item.spotify_id}
-              type="button"
-              className="search-result"
-              onClick={() => {
-                onPick(item)
-                setQuery('')
-                setOpen(false)
-              }}
-            >
+            <button key={item.spotify_id} type="button" className="search-result" onClick={() => choose(item)}>
               <span className="normal-case tracking-normal text-sm">
                 {item.name}
                 <span className="block text-[11px] opacity-80">{item.artist_name}</span>
@@ -116,7 +135,7 @@ export function SongSearch({
           ))}
         </div>
       ) : null}
-      {searching ? <p className="mt-1 normal-case tracking-normal text-[11px] opacity-70">Searching Spotify…</p> : null}
+      {searching ? <p className="mt-1 normal-case tracking-normal text-[11px] opacity-70">Looking up songs…</p> : null}
     </label>
   )
 }
