@@ -107,9 +107,9 @@ export function TablePage() {
       <header className="flex items-start justify-between gap-4">
         <div>
           <p className="text-[11px] tracking-[0.28em] uppercase">The table</p>
-          <h1 className="font-display text-5xl md:text-6xl leading-none mt-1">
+          <h1 className="font-title text-5xl md:text-6xl leading-none mt-1">
             The Hand
-            <span className="font-script text-3xl ml-3 lowercase">deal</span>
+            <span className="text-3xl ml-3 lowercase font-extrabold">deal</span>
           </h1>
         </div>
         <button type="button" onClick={() => void connect()} className="text-xs tracking-[0.16em] uppercase border-b border-current pb-0.5">
@@ -196,7 +196,7 @@ export function TablePage() {
         ) : (
           <div className="deck opacity-50">
             <article className="song-card is-front flex items-center justify-center">
-              <p className="font-script text-4xl">waiting on a deal</p>
+              <p className="font-title text-4xl px-8 text-center lowercase">waiting on a deal</p>
             </article>
           </div>
         )}

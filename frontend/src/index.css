@@ -1,13 +1,44 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Cormorant Garamond", ui-serif, Georgia, serif;
-  --font-script: "Great Vibes", cursive;
-  --color-felt: #f3ead8;
+  --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-title: "Stara", "Quicksand", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --color-felt: #f4f4f1;
   --color-ink: #1c2758;
   --color-blue: #2d4aa0;
-  --color-cream: #f7f0de;
+  --color-paper: #fafaf8;
+}
+
+/* Prefer locally installed Stara (Mac / licensed desktop install). */
+@font-face {
+  font-family: "Stara";
+  font-style: normal;
+  font-weight: 500;
+  src: local("Stara Medium"), local("Stara-Medium");
+}
+@font-face {
+  font-family: "Stara";
+  font-style: normal;
+  font-weight: 600;
+  src: local("Stara SemiBold"), local("Stara Semi Bold"), local("Stara-SemiBold");
+}
+@font-face {
+  font-family: "Stara";
+  font-style: normal;
+  font-weight: 700;
+  src: local("Stara Bold"), local("Stara-Bold"), local("Stara");
+}
+@font-face {
+  font-family: "Stara";
+  font-style: normal;
+  font-weight: 800;
+  src: local("Stara ExtraBold"), local("Stara Extra Bold"), local("Stara-ExtraBold");
+}
+@font-face {
+  font-family: "Stara";
+  font-style: normal;
+  font-weight: 900;
+  src: local("Stara Black"), local("Stara-Black");
 }
 
 html,
@@ -18,23 +49,22 @@ body,
 
 body {
   margin: 0;
-  background: #f3ead8;
+  background: #f4f4f1;
   color: #2d4aa0;
-  font-family: var(--font-sans);
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
-.font-display {
-  font-family: var(--font-display);
-}
-
-.font-script {
-  font-family: var(--font-script);
+.font-title {
+  font-family: var(--font-title);
+  font-weight: 800;
+  letter-spacing: -0.04em;
 }
 
 .table-page {
   min-height: 100vh;
-  background: #f3ead8;
+  background: #f4f4f1;
   color: #2d4aa0;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .deck {
@@ -47,7 +77,7 @@ body {
 .song-card {
   position: absolute;
   inset: 0;
-  background: #f7f0de;
+  background: #fafaf8;
   border: 2.5px solid #2d4aa0;
   border-radius: 18px;
   box-shadow: 6px 10px 0 #2d4aa0;
@@ -88,7 +118,7 @@ body {
 .song-art-dots {
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(#f7f0de 1.15px, transparent 1.25px);
+  background-image: radial-gradient(#f4f4f1 1.15px, transparent 1.25px);
   background-size: 6px 6px;
   mix-blend-mode: multiply;
   pointer-events: none;
@@ -106,7 +136,8 @@ body {
   position: absolute;
   top: 10px;
   left: 12px;
-  font-family: var(--font-display);
+  font-family: var(--font-title);
+  font-weight: 800;
   font-size: 15px;
   line-height: 1.05;
 }
@@ -125,9 +156,11 @@ body {
 }
 
 .song-title {
-  font-family: var(--font-display);
+  font-family: var(--font-title);
+  font-weight: 800;
   font-size: 1.7rem;
   line-height: 0.95;
+  letter-spacing: -0.04em;
   margin: 0;
 }
 
@@ -143,10 +176,11 @@ body {
   width: 100%;
   margin-top: 6px;
   border: 2px solid #2d4aa0;
-  background: #f7f0de;
+  background: #fafaf8;
   color: #2d4aa0;
   padding: 12px 14px;
   font-size: 14px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   outline: none;
 }
 
@@ -156,9 +190,10 @@ body {
   font-size: 13px;
   background: transparent;
   color: #2d4aa0;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .pill-blue.is-on {
   background: #2d4aa0;
-  color: #f7f0de;
+  color: #f4f4f1;
 }

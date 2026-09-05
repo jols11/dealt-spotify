@@ -10,7 +10,8 @@ This is not a listening-graph dashboard and it does not use Spotify Radio, audio
 
 - Paste two `open.spotify.com/track/…` links
 - Length as number of songs or target minutes (`duration_ms` from the track object)
-- Stacked poker cards: cream stock, royal blue, dotted **album** halftone (not a dotted page background)
+- Stacked poker cards: off-white stock, royal blue, dotted **album** halftone (not a dotted page background)
+- Titles use **Stara** when it is installed on the machine (geometric sans from the specimen); otherwise Quicksand. Body copy is Helvetica Neue.
 - Front card can play via the Spotify embed
 - Save / reopen / fold hands
 
