@@ -3,29 +3,32 @@ import { SongCard, type DealtTrack } from './SongCard'
 export function Deck({
   steps,
   active,
-  onAdvance,
+  onSelect,
+  votes,
+  onVote,
 }: {
   steps: DealtTrack[]
   active: number
-  onAdvance: () => void
+  onSelect: (index: number) => void
+  votes: Record<string, number>
+  onVote: (track: DealtTrack, value: 1 | -1) => void
 }) {
-  const remaining = steps.slice(active)
-  const visible = remaining.slice(0, 4)
-
   return (
-    <div className="deck">
-      {visible
-        .map((track, offset) => (
-          <SongCard
-            key={`${track.spotify_id}-${active + offset}`}
-            track={track}
-            index={active + offset}
-            isFront={offset === 0}
-            peekOffset={offset}
-            onAdvance={onAdvance}
-          />
-        ))
-        .reverse()}
+    <div className="row-deck">
+      {steps.map((track, index) => (
+        <SongCard
+          key={`${track.spotify_id}-${index}`}
+          track={track}
+          index={index}
+          isFront={index === active}
+          peekOffset={index}
+          layout="row"
+          playable
+          vote={votes[track.spotify_id] || 0}
+          onVote={(value) => onVote(track, value)}
+          onAdvance={() => onSelect(index)}
+        />
+      ))}
     </div>
   )
 }

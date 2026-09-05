@@ -39,6 +39,7 @@ class User(Base):
     transitions: Mapped[list["ArtistTransition"]] = relationship(back_populates="user", cascade="all, delete-orphan")
     top_snapshots: Mapped[list["TopSnapshot"]] = relationship(back_populates="user", cascade="all, delete-orphan")
     hands: Mapped[list["SavedHand"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+    feedback: Mapped[list["TrackFeedback"]] = relationship(back_populates="user", cascade="all, delete-orphan")
 
 
 class OAuthToken(Base):
@@ -223,3 +224,20 @@ class SavedHand(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     user: Mapped[User] = relationship(back_populates="hands")
+
+
+class TrackFeedback(Base):
+    """Thumbs on dealt tracks. Used to bias later genre-walk picks."""
+
+    __tablename__ = "track_feedback"
+    __table_args__ = (UniqueConstraint("user_id", "spotify_id", name="uq_user_track_feedback"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    spotify_id: Mapped[str] = mapped_column(String(64), index=True)
+    artist_name: Mapped[str] = mapped_column(String(255), default="")
+    genres: Mapped[str] = mapped_column(Text, default="")
+    vote: Mapped[int] = mapped_column(Integer)  # 1 or -1
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+    user: Mapped[User] = relationship(back_populates="feedback")

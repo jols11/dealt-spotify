@@ -29,6 +29,7 @@ export function TablePage() {
   const [busy, setBusy] = useState(false)
   const [hands, setHands] = useState<HandRecord[]>([])
   const [savedNote, setSavedNote] = useState<string | null>(null)
+  const [votes, setVotes] = useState<Record<string, number>>({})
 
   const liveSpotify = me?.user?.is_demo === false
   const catalogReady = Boolean(me?.catalog_ready)
@@ -50,8 +51,22 @@ export function TablePage() {
     }
   }
 
+  async function loadVotes() {
+    try {
+      const data = await api.listVotes()
+      const next: Record<string, number> = {}
+      for (const item of data.items) next[item.spotify_id] = item.vote
+      setVotes(next)
+    } catch {
+      setVotes({})
+    }
+  }
+
   useEffect(() => {
-    if (me?.authenticated) void loadHands()
+    if (me?.authenticated) {
+      void loadHands()
+      void loadVotes()
+    }
   }, [me?.authenticated])
 
   async function deal(event: FormEvent) {
@@ -135,7 +150,7 @@ export function TablePage() {
       <h1 className="wordmark relative z-10 mt-3">Dealt</h1>
 
       <p className="relative z-10 mt-4 max-w-lg text-sm opacity-80">
-        Search an opening track and a closing track, then Deal — you can type the names and Deal without clicking the list. We deal the cards between them.
+        Search an opening track and a closing track, then Deal. The full card plays in Spotify’s player; the rest of the stack peeks in a row so you can see every song. Thumbs up or down steer later deals.
       </p>
 
       <p className="relative z-10 mt-3 max-w-xl text-xs opacity-75 leading-relaxed">
@@ -196,7 +211,20 @@ export function TablePage() {
             <Deck
               steps={steps}
               active={active}
-              onAdvance={() => setActive((value) => Math.min(value + 1, steps.length - 1))}
+              onSelect={setActive}
+              votes={votes}
+              onVote={(track, value) => {
+                const next = votes[track.spotify_id] === value ? 0 : value
+                setVotes((current) => ({ ...current, [track.spotify_id]: next }))
+                void api
+                  .voteTrack({
+                    spotify_id: track.spotify_id,
+                    artist_name: track.artist_name,
+                    genres: track.genres || [],
+                    vote: next,
+                  })
+                  .catch(() => {})
+              }}
             />
             <div className="flex justify-center gap-4 mt-8">
               <button type="button" className="pill-blue" onClick={() => setActive((value) => Math.max(0, value - 1))} disabled={active === 0}>

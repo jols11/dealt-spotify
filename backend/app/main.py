@@ -10,6 +10,7 @@ from app.api.analytics import router as analytics_router
 from app.api.auth import router as auth_router
 from app.api.data import router as data_router
 from app.api.discover import router as discover_router
+from app.api.feedback import router as feedback_router
 from app.api.hands import router as hands_router
 from app.core.config import ROOT_DIR, get_settings
 from app.db.session import init_db
@@ -49,6 +50,7 @@ def create_app() -> FastAPI:
     application.include_router(analytics_router)
     application.include_router(discover_router)
     application.include_router(hands_router)
+    application.include_router(feedback_router)
 
     @application.get("/api/health")
     def health():

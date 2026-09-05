@@ -5,7 +5,7 @@ from dataclasses import dataclass
 import networkx as nx
 from sqlalchemy.orm import Session
 
-from app.models.entities import ArtistTransition, User
+from app.models.entities import ArtistTransition, TrackFeedback, User
 from app.services.auth import catalog_client_for_user
 from app.services.demo_seed import CATALOG, FOLLOW
 from app.services.spotify_client import SpotifyAPIError, SpotifyClient
@@ -68,6 +68,32 @@ def _hydrate_genres(client: SpotifyClient, artist_id: str | None) -> list[str]:
     except SpotifyAPIError:
         return []
     return list(artist.get("genres") or [])
+
+
+def _taste(db: Session, user: User) -> tuple[set[str], set[str], set[str]]:
+    blocked_ids: set[str] = set()
+    blocked_artists: set[str] = set()
+    liked_artists: set[str] = set()
+    for row in db.query(TrackFeedback).filter(TrackFeedback.user_id == user.id).all():
+        if row.vote < 0:
+            blocked_ids.add(row.spotify_id)
+            if row.artist_name:
+                blocked_artists.add(row.artist_name.lower())
+        elif row.vote > 0 and row.artist_name:
+            liked_artists.add(row.artist_name.lower())
+    return blocked_ids, blocked_artists, liked_artists
+
+
+def _prefer(options: list[ResolvedTrack], blocked_ids: set[str], blocked_artists: set[str], liked_artists: set[str]) -> list[ResolvedTrack]:
+    kept: list[ResolvedTrack] = []
+    for track in options:
+        if track.spotify_id in blocked_ids:
+            continue
+        if track.artist_name.lower() in blocked_artists:
+            continue
+        kept.append(track)
+    kept.sort(key=lambda track: 0 if track.artist_name.lower() in liked_artists else 1)
+    return kept
 
 
 def catalog_tracks() -> list[ResolvedTrack]:
@@ -309,20 +335,24 @@ def bridge_playlist(
     target_count = max(3, min(int(length), 16)) if unit != "minutes" else 8
     needed = max(0, target_count - 2)
 
+    blocked_ids, blocked_artists, liked_artists = _taste(db, user)
     used = {start.spotify_id, end.spotify_id}
     middles: list[ResolvedTrack] = []
     waypoints = genre_waypoints(start.genres, end.genres, needed)
     path_note = (
         "Middle cards walk artist genre tags from the opening vibe toward the close "
         f"(pace {start_pace:.2f} → {end_pace:.2f}). This uses Get Artist genre metadata and Search, "
-        "not Spotify Audio Features, BPM, or Radio."
+        "not Spotify Audio Features, BPM, or Radio. Thumbs-down tracks and artists are skipped; thumbs-up artists are preferred."
     )
 
     for genre in waypoints:
-        options = _tracks_by_genre(client, genre, used)
+        options = _prefer(_tracks_by_genre(client, genre, used), blocked_ids, blocked_artists, liked_artists)
         if not options:
-            options = _tracks_by_artist(client, start.artist_name, used) or _tracks_by_artist(
-                client, end.artist_name, used
+            options = _prefer(
+                _tracks_by_artist(client, start.artist_name, used) or _tracks_by_artist(client, end.artist_name, used),
+                blocked_ids,
+                blocked_artists,
+                liked_artists,
             )
         if not options:
             continue

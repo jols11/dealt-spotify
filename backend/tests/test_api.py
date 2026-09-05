@@ -75,4 +75,13 @@ def test_demo_mode_overview_and_graph(tmp_path):
     search = client.get("/api/discover/search", params={"q": "Kill Bill"})
     assert search.status_code == 200
     assert search.json()["items"]
+    seed = search.json()["items"][0]
+    voted = client.post(
+        "/api/feedback",
+        json={"spotify_id": seed["spotify_id"], "artist_name": seed["artist_name"], "genres": [], "vote": 1},
+    )
+    assert voted.status_code == 200
+    listed = client.get("/api/feedback")
+    assert listed.status_code == 200
+    assert listed.json()["items"]
     app.dependency_overrides.clear()

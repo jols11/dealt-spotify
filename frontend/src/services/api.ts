@@ -55,6 +55,9 @@ export const api = {
       body: JSON.stringify({ start, end, length, unit }),
     }),
   listHands: () => request<{ items: unknown[] }>('/api/hands'),
+  listVotes: () => request<{ items: Array<{ spotify_id: string; vote: number }> }>('/api/feedback'),
+  voteTrack: (body: { spotify_id: string; artist_name: string; genres: string[]; vote: number }) =>
+    request('/api/feedback', { method: 'POST', body: JSON.stringify(body) }),
   saveHand: (payload: Record<string, unknown>, title?: string) =>
     request('/api/hands', { method: 'POST', body: JSON.stringify({ title, payload }) }),
   deleteHand: (id: number) => request(`/api/hands/${id}`, { method: 'DELETE' }),
