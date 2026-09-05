@@ -69,22 +69,41 @@ See [docs/ANALYTICS.md](docs/ANALYTICS.md) for sessionization, transition probab
 
 ## Running locally
 
+You need **Python 3.10+** and **Node.js 20+** (`npm`). On a Mac, if `npm` is missing:
+
 ```bash
+brew install node
+```
+
+Run every command from the **repository root** (`spotify-listen-graph`), not from `frontend/`.
+
+```bash
+cd /path/to/spotify-listen-graph
+git pull
+
 python3 -m venv .venv
 source .venv/bin/activate
+python -m pip install --upgrade pip
 pip install -r backend/requirements.txt
 
 cd frontend && npm install && cd ..
 
 cp .env.example .env
-# Optional: fill SPOTIFY_CLIENT_ID / SECRET and add the redirect URI
-# http://127.0.0.1:8765/api/auth/callback
-# in the Spotify developer dashboard.
-
 mkdir -p data/local
-PYTHONPATH=backend .venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8765
-# in another terminal:
-cd frontend && npm run dev -- --host 127.0.0.1 --port 4177
+```
+
+Terminal 1 (API):
+
+```bash
+source .venv/bin/activate
+PYTHONPATH=backend uvicorn app.main:app --host 127.0.0.1 --port 8765
+```
+
+Terminal 2 (UI):
+
+```bash
+cd frontend
+npm run dev -- --host 127.0.0.1 --port 4177
 ```
 
 Open [http://127.0.0.1:4177](http://127.0.0.1:4177) and choose **Explore the demo**.
